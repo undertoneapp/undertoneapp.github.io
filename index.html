@@ -35,14 +35,20 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+html,body{overflow:hidden;overscroll-behavior:none}
+.app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
-.wrap{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px calc(104px + env(safe-area-inset-bottom,0px))}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg)}
-header.top .in{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wrap{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-left:max(20px,env(safe-area-inset-left,0px),calc((100% - 600px)/2));padding-right:max(20px,env(safe-area-inset-right,0px),calc((100% - 600px)/2));padding-block:16px 24px}
+.wrap > section{display:flex;flex-direction:column;gap:12px}
+.wrap > section > *{margin-top:0;margin-bottom:0}
+#wItems,#wDiary,#sLooks,#sWeek,#sTrip,#sInsp,#shCat,#shCheck,#tripOut{display:flex;flex-direction:column;gap:12px}
+:is(#wItems,#wDiary,#sLooks,#sWeek,#sTrip,#sInsp,#shCat,#shCheck,#tripOut) > *{margin-top:0!important;margin-bottom:0!important}
+#tripOut:empty,#looksState:empty,#planState:empty,#checkOut:empty{display:none}
+header.top{flex:none;position:relative;z-index:5;background:var(--bg);padding-top:env(safe-area-inset-top,0px);border-bottom:1px solid var(--line)}
+header.top .in{max-width:640px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .mark{margin:0;font-weight:800;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
 .mark i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#A9C2DA,#8E99CF,#B6A7CF,#B07A93,#D3A4B0,#A84870,#4F7E86,#78AEA1,#A9C2DA)}
 .hdr-r{display:flex;gap:8px;align-items:center}
@@ -51,9 +57,9 @@ header.top .in{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area
 .icon-btn .badge{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
 .pill-btn{height:38px;border-radius:19px;border:0;background:var(--card);padding:0 14px;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
 
-h2.view-title{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
-.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
-.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px}
+h2.view-title{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.15}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.card{background:var(--card);border-radius:var(--r);padding:18px}
 .card h3{margin:0 0 10px;font-size:16px;font-weight:700}
 .card p{margin:0}
 .eyebrow{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
@@ -185,20 +191,40 @@ dl.kv dd{margin:0;min-width:0}
 .bubble{max-width:85%;padding:10px 14px;border-radius:18px;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
 .bubble.me{align-self:flex-end;background:var(--fg);color:var(--bg);border-bottom-right-radius:6px}
 .bubble.ai{align-self:flex-start;background:var(--card);border-bottom-left-radius:6px}
-.composer{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:6;background:var(--bg);padding-block:8px}
+.composer{flex:none;position:relative;z-index:6;background:var(--bg);padding-block:10px;border-top:1px solid var(--line)}
 .composer .in{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:8px}
 .composer form{display:flex;gap:8px}
 .composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:11px 16px;outline:none}
-#v-stylist .wrap-pad{padding-bottom:120px}
+#v-stylist .wrap-pad{display:flex;flex-direction:column;gap:12px}
 
 /* mannequin */
 .mq-wrap{display:grid;place-items:center;background:var(--sunk);border-radius:var(--r);padding:12px 0}
 .mq-wrap svg{height:360px;max-width:100%}
 
+/* preloader */
+.preload{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;transition:opacity .35s ease}
+.preload.out{opacity:0;pointer-events:none}
+.preload .box{display:grid;justify-items:center;gap:14px}
+.preload .logo{width:64px;height:64px;border-radius:50%;background:conic-gradient(#A9C2DA,#8E99CF,#B6A7CF,#B07A93,#D3A4B0,#A84870,#4F7E86,#78AEA1,#A9C2DA);-webkit-mask:radial-gradient(circle,transparent 46%,#000 47%);mask:radial-gradient(circle,transparent 46%,#000 47%);animation:spin 1.1s linear infinite}
+.preload b{font-weight:800;font-size:20px;letter-spacing:-.03em}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.preload .logo{animation:pulse 1.4s ease-in-out infinite!important}}
+@keyframes pulse{50%{opacity:.4}}
+/* settings */
+.tg{padding:10px 0;border-top:1px solid var(--line);font-size:15px;cursor:pointer}
+.tg input{appearance:none;-webkit-appearance:none;width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;cursor:pointer;flex:none;margin:0;transition:background .15s}
+.tg input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.tg input:checked{background:var(--accent)}.tg input:checked::after{transform:translateX(18px)}
+.savebar{flex:none;position:relative;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-block:10px}
+.savebar .in{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;align-items:center;gap:10px}
+#v-prefs{padding-bottom:0}
+.savebar .row{flex-wrap:nowrap;flex:none}
+.savebar #saveNote{min-width:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;z-index:30}
 /* tabs */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs{flex:none;position:relative;z-index:7;background:var(--card);border-top:1px solid var(--line);padding-top:6px;padding-bottom:max(10px,env(safe-area-inset-bottom,0px));padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
 nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 6px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600}
 nav.tabs a svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6}
 nav.tabs a[aria-current="page"]{color:var(--accent)}
 
@@ -239,6 +265,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 <body>
 
 
+<div class="preload" id="preload"><div class="box"><div class="logo"></div><b>undertone</b></div></div>
+<div class="app" id="app">
 <header class="top"><div class="in">
   <h1 class="mark"><i></i>undertone</h1>
   <div class="hdr-r">
@@ -253,15 +281,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <div class="card">
     <div class="me">
       <div class="avatar" id="avatar"></div>
-      <div class="me-r">
-        <input id="nameIn" type="text" autocomplete="name" data-ph="prof.namePh">
-        <div class="row">
-          <label class="btn soft sm" for="avGallery"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg><span data-t="prof.gallery"></span></label>
-          <label class="btn soft sm" for="avCamera"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="prof.camera"></span></label>
-          <input id="avGallery" type="file" accept="image/*" hidden>
-          <input id="avCamera" type="file" accept="image/*" capture="user" hidden>
-        </div>
-      </div>
+      <div class="me-r"><b id="meName" style="font-size:20px;font-weight:800;line-height:1.2"></b><span class="hint" id="meSub" style="margin:0"></span></div>
+      <a class="icon-btn" href="#prefs" id="prefsBtn" style="align-self:flex-start;background:var(--sunk);color:var(--fg)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a>
     </div>
   </div>
   <div class="card">
@@ -293,10 +314,32 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <div class="card"><h3 data-t="prof.avoid"></h3><div class="avoid-row" id="sAvoid"></div><p class="hint" data-t="prof.avoidHint"></p></div>
   <div class="card" id="makeupBlock"><h3 data-t="prof.makeup"></h3><dl class="kv" id="sMakeup"></dl><div class="soon"><b data-t="prof.soon"></b> · <span data-t="prof.soonText"></span></div></div>
   <div class="card" id="hairBlock"><h3 data-t="prof.hair"></h3><dl class="kv" id="sHair"></dl></div>
+</section>
+
+<!-- SETTINGS (route #prefs) -->
+<section id="v-prefs" hidden>
+  <a href="#profile" class="btn soft sm" style="margin:4px 0 8px"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span data-t="tab.profile"></span></a>
+  <h2 class="view-title" data-t="set.title"></h2>
   <div class="card">
-    <h3 data-t="prof.settings"></h3>
-    <div class="field" style="margin:0"><label data-t="prof.gender"></label><div class="seg" id="gender" style="margin:0"></div></div>
-    <div class="field"><label for="langSel" data-t="prof.lang"></label><select class="inp" id="langSel"></select></div>
+    <h3 data-t="set.profile"></h3>
+    <div class="me">
+      <div class="avatar" id="pAvatar"></div>
+      <div class="me-r">
+        <div class="row">
+          <label class="btn soft sm" for="avGallery"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg><span data-t="prof.gallery"></span></label>
+          <label class="btn soft sm" for="avCamera"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="prof.camera"></span></label>
+          <button class="btn soft sm" type="button" id="avRemove" data-t="set.avatarRemove"></button>
+          <input id="avGallery" type="file" accept="image/*" hidden>
+          <input id="avCamera" type="file" accept="image/*" capture="user" hidden>
+        </div>
+      </div>
+    </div>
+    <div class="field"><label for="nameIn" data-t="set.name"></label><input class="inp" id="nameIn" type="text" autocomplete="name" data-ph="prof.namePh"></div>
+    <div class="field"><label data-t="prof.gender"></label><div class="seg" id="gender" style="margin:0"></div></div>
+  </div>
+  <div class="card">
+    <h3 data-t="set.region"></h3>
+    <div class="field" style="margin:0"><label for="langSel" data-t="prof.lang"></label><select class="inp" id="langSel"></select></div>
     <p class="hint" id="langHint"></p>
     <div class="grid2" style="margin-top:4px">
       <div class="field"><label for="shopCountry" data-t="prof.country"></label><select class="inp" id="shopCountry"></select></div>
@@ -305,6 +348,38 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <p class="hint" id="geoHint"></p>
     <div class="row" style="margin-top:10px"><button class="btn soft sm" type="button" id="ipBtn" data-t="prof.ip"></button></div>
   </div>
+  <div class="card">
+    <h3 data-t="set.notif"></h3>
+    <label class="between tg"><span data-t="set.notifDaily"></span><input type="checkbox" id="nDaily"></label>
+    <div class="between" style="padding:4px 0 8px"><span class="hint" style="margin:0" data-t="set.notifTime"></span><input class="inp" id="nTime" type="time" style="width:120px"></div>
+    <label class="between tg"><span data-t="set.notifWeather"></span><input type="checkbox" id="nWeather"></label>
+    <label class="between tg"><span data-t="set.notifDiary"></span><input type="checkbox" id="nDiary"></label>
+    <p class="hint" id="nHint"></p>
+  </div>
+  <div class="card">
+    <h3 data-t="set.weather"></h3>
+    <div class="field" style="margin:0"><label data-t="set.temp"></label><div class="seg" id="tUnit" style="margin:0"></div></div>
+    <div class="field"><label for="prefCity" data-t="week.city"></label><input class="inp" id="prefCity" type="text"></div>
+    <label class="between tg" style="margin-top:8px"><span data-t="set.useGeo"></span><input type="checkbox" id="prefGeo"></label>
+  </div>
+  <div class="card">
+    <h3 data-t="set.shopping"></h3>
+    <div class="field" style="margin:0"><label data-t="shop.segment"></label><div class="seg" id="prefSegs" style="margin:0"></div></div>
+    <p class="hint" data-t="set.shopHint"></p>
+  </div>
+  <div class="card">
+    <h3 data-t="set.look"></h3>
+    <div class="field" style="margin:0"><label data-t="set.theme"></label><div class="seg" id="themeSeg" style="margin:0"></div></div>
+  </div>
+  <div class="card">
+    <h3 data-t="set.data"></h3>
+    <p class="hint" style="margin:0 0 10px" data-t="set.dataHint"></p>
+    <div class="row"><button class="btn soft sm" type="button" id="exportBtn" data-t="set.export"></button><label class="btn soft sm" for="importFile" data-t="set.import"></label><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+    <div class="row" style="margin-top:10px"><button class="btn soft sm" type="button" id="resetBtn" style="color:var(--bad)" data-t="set.reset"></button></div>
+    <div id="resetConfirm" hidden class="msg"><span data-t="set.resetConfirm"></span><div class="row" style="margin-top:8px"><button class="btn sm" type="button" id="resetYes" style="background:var(--bad);color:#fff" data-t="set.resetYes"></button><button class="btn soft sm" type="button" id="resetNo" data-t="set.cancel"></button></div></div>
+    <p class="hint" id="dataHint"></p>
+  </div>
+  <p class="hint" style="text-align:center" id="aboutLine"></p>
 </section>
 
 <!-- WARDROBE -->
@@ -418,6 +493,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </section>
 </main>
 
+<div class="savebar" id="saveBar" hidden><div class="in"><span id="saveNote" class="hint" style="margin:0"></span><div class="row"><button class="btn soft" type="button" id="prefCancel" data-t="set.cancel"></button><button class="btn acc" type="button" id="prefSave" data-t="set.save"></button></div></div></div>
 <div class="composer" id="composer" hidden><div class="in">
   <div class="chips" id="chatChips"></div>
   <form id="chatForm"><input id="chatIn" type="text" autocomplete="off" data-ph="chat.ph"><button class="btn acc" id="chatSend" type="submit" data-t="chat.send"></button></form>
@@ -430,11 +506,21 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <a href="#shop" data-v="shop"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span data-t="tab.shop"></span></a>
   <a href="#stylist" data-v="stylist"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></svg><span data-t="tab.stylist"></span></a>
 </div></nav>
+</div>
 <div id="sheetRoot"></div>
 
 <script>
 /* ================= i18n ================= */
 const EN={
+"set.title":"Settings","set.profile":"Profile","set.name":"Name","set.avatarRemove":"Remove photo","set.region":"Language & region","set.notif":"Notifications",
+"set.notifDaily":"Outfit of the day","set.notifTime":"Time","set.notifWeather":"Weather alerts: rain or frost","set.notifDiary":"Evening reminder for the outfit diary",
+"set.notifHint":"Notifications arrive while the app is installed on your home screen and opened during the day. Background reminders will come with the server version.","set.notifDenied":"Notifications are blocked for this site. Allow them in your phone's browser settings.","set.notifNA":"Notifications work in the installed app (undertoneapp.github.io), not inside Claude.",
+"set.weather":"Weather","set.temp":"Temperature","set.useGeo":"Use my location for the forecast","set.shopping":"Shopping","set.shopHint":"Which price segments the catalogue shows by default.",
+"set.look":"Appearance","set.theme":"Theme","theme.auto":"Auto","theme.light":"Light","theme.dark":"Dark",
+"set.data":"Data","set.dataHint":"Everything is stored only on this device. Make a backup before changing phones.","set.export":"Download backup","set.import":"Restore from backup","set.reset":"Delete all my data","set.resetConfirm":"This deletes your profile, wardrobe photos, diary and saved items on this device. It can't be undone.","set.resetYes":"Delete everything",
+"set.exported":"Backup downloaded.","set.imported":"Data restored","set.importFail":"This file isn't an Undertone backup.","set.local":"data stays on your device",
+"set.save":"Save","set.cancel":"Cancel","set.saved":"Saved","set.unsaved":"Unsaved changes",
+"notif.dailyTitle":"Today's outfit","notif.wxTitle":"Weather today","notif.rain":"Rain is likely ({p}%) — take an umbrella and a trench.","notif.cold":"Frost down to {t} — warm coat and boots.","notif.diaryTitle":"Outfit diary","notif.diary":"Take a selfie of today's outfit.",
 "tab.profile":"Profile","tab.wardrobe":"Wardrobe","tab.style":"Style","tab.shop":"Shop","tab.stylist":"Stylist","close":"Close","del":"Delete","wait":"Working…",
 "prof.namePh":"Your name","prof.gallery":"Gallery","prof.camera":"Camera","prof.myType":"My colour type","prof.byPhoto":"Find out from a photo","prof.checkItem":"Check an item",
 "prof.wearHint":"Hover or tap for the full palette","prof.count":"{n} shades that suit you","prof.know":"I know my colour type","prof.choose":"— choose —",
@@ -480,6 +566,15 @@ const EN={
 "cat.all":"All","cat.outerwear":"Outerwear","cat.knit":"Knitwear","cat.top":"Tops","cat.dress":"Dresses","cat.skirt":"Skirts","cat.trousers":"Trousers","cat.shoes":"Shoes","cat.bag":"Bags","cat.accessory":"Accessories"
 };
 const RU={
+"set.title":"Настройки","set.profile":"Профиль","set.name":"Имя","set.avatarRemove":"Убрать фото","set.region":"Язык и регион","set.notif":"Уведомления",
+"set.notifDaily":"Образ дня","set.notifTime":"Время","set.notifWeather":"Погода: дождь или мороз","set.notifDiary":"Вечернее напоминание о дневнике образов",
+"set.notifHint":"Уведомления приходят, когда приложение установлено на экран «Домой» и открывается в течение дня. Фоновые напоминания появятся с серверной версией.","set.notifDenied":"Уведомления для сайта заблокированы. Разреши их в настройках браузера на телефоне.","set.notifNA":"Уведомления работают в установленном приложении (undertoneapp.github.io), а не внутри Claude.",
+"set.weather":"Погода","set.temp":"Температура","set.useGeo":"Прогноз по моему местоположению","set.shopping":"Покупки","set.shopHint":"Какие ценовые сегменты каталог показывает по умолчанию.",
+"set.look":"Оформление","set.theme":"Тема","theme.auto":"Авто","theme.light":"Светлая","theme.dark":"Тёмная",
+"set.data":"Данные","set.dataHint":"Всё хранится только на этом устройстве. Перед сменой телефона сделай резервную копию.","set.export":"Скачать резервную копию","set.import":"Восстановить из копии","set.reset":"Удалить все мои данные","set.resetConfirm":"Будут удалены профиль, фото гардероба, дневник и избранное на этом устройстве. Отменить нельзя.","set.resetYes":"Удалить всё",
+"set.exported":"Резервная копия скачана.","set.imported":"Данные восстановлены","set.importFail":"Это не файл резервной копии Undertone.","set.local":"данные хранятся на твоём устройстве",
+"set.save":"Сохранить","set.cancel":"Отменить","set.saved":"Сохранено","set.unsaved":"Есть несохранённые изменения",
+"notif.dailyTitle":"Образ дня","notif.wxTitle":"Погода сегодня","notif.rain":"Вероятен дождь ({p}%) — возьми зонт и тренч.","notif.cold":"Мороз до {t} — тёплое пальто и сапоги.","notif.diaryTitle":"Дневник образов","notif.diary":"Сделай селфи сегодняшнего образа.",
 "tab.profile":"Профиль","tab.wardrobe":"Гардероб","tab.style":"Стиль","tab.shop":"Подбор","tab.stylist":"Стилист","close":"Закрыть","del":"Удалить","wait":"Секунду…",
 "prof.namePh":"Твоё имя","prof.gallery":"Галерея","prof.camera":"Камера","prof.myType":"Мой цветотип","prof.byPhoto":"Определить по фото","prof.checkItem":"Проверить вещь",
 "prof.wearHint":"Наведи или нажми — откроется вся палитра","prof.count":"{n} оттенков, которые тебе идут","prof.know":"Я знаю свой цветотип","prof.choose":"— выбери —",
@@ -665,6 +760,7 @@ const S=Object.assign({
   styleTags:[], avoidTags:[], styleSummary:null, pinterest:"", aiLooks:null, occ:"all",
   shopCountry:LOC.shop, currency:LOC.cur, geo:{src:"tz",label:LOC.tz}, rates:NBRB_SEED,
   cat:"all", color:"", segs:["budget","mid"], stores:["zara","hm","mango","reserved","massimo","cos","arket"], pmin:null, pmax:null,
+  theme:"auto", tempUnit:"C", useGeo:false, notif:{daily:false,time:"08:00",weather:true,diary:false,last:{}},
   typeSys:"kibbe", larson:"", wardrobe:[], diary:[], week:{city:"",days:[],occ:{},plan:{}}, trip:{city:"",start:"",nights:4,purpose:"city",result:null},
   chat:[], favs:[], favLooks:[], wSeg:"items", sSeg:"looks", shSeg:"cat"
 }, old?{lang:"ru",name:old.name||"",avatar:old.avatar||"",gender:old.gender||"f",styleTags:old.styleTags||[],avoidTags:old.avoidTags||[],styleSummary:old.styleSummary||null,pinterest:old.pinterest||"",kibbe:"DC",favLooks:old.favLooks||[]}:{}, lsGet(LS)||{});
@@ -677,7 +773,7 @@ if(S.pmax==null){S.pmin=0;S.pmax=niceRound(convert(2000,"PLN",shopCur()))}
 let sample=null,imgLimits=null,mcp=null;
 const STANDALONE=!window.claude;
 if(STANDALONE)mcp={direct:true};
-(async()=>{await null;if(STANDALONE){renderAll();autoWeather();return}
+(async()=>{await null;if(STANDALONE){renderAll();if(S.useGeo&&S.week.lat==null)geoWeather(true);else autoWeather();setTimeout(maybeNotify,1500);return}
   try{sample=await window.claude?.use?.("sample");if(sample)imgLimits=(await sample.limits().catch(()=>null))?.images||null}catch(e){sample=null}
   try{mcp=await window.claude?.use?.("mcp")}catch(e){mcp=null}
   renderAll();
@@ -879,19 +975,16 @@ $("curPill").onclick=()=>openConverter();
 function segHtml(id,opts,cur){$(id).innerHTML=opts.map(([k,l])=>`<button type="button" data-k="${k}" aria-pressed="${cur===k}">${esc(l)}</button>`).join("")}
 
 /* ================= PROFILE ================= */
-function renderAvatar(){$("avatar").innerHTML=S.avatar?`<img alt="" src="${S.avatar}">`:esc((S.name||"?").trim().charAt(0).toUpperCase()||"?")}
-async function loadAvatar(file){if(!file)return;const img=await loadImage(file);const c=document.createElement("canvas"),sz=320;c.width=c.height=sz;const k=Math.max(sz/img.width,sz/img.height),w=img.width*k,h=img.height*k;c.getContext("2d").drawImage(img,(sz-w)/2,(sz-h)/2,w,h);try{S.avatar=c.toDataURL("image/jpeg",.85)}catch(e){}persist();renderAvatar()}
-$("avGallery").onchange=e=>{loadAvatar(e.target.files[0]);e.target.value=""};
-$("avCamera").onchange=e=>{loadAvatar(e.target.files[0]);e.target.value=""};
-$("nameIn").onchange=()=>{S.name=$("nameIn").value.trim();persist();renderAvatar()};
 function curOptions(sel){const keys=Object.keys(S.rates.byn),top=["EUR","PLN","BYN","GBP","USD","CHF","CZK","SEK","DKK","NOK"];return[...top.filter(k=>keys.includes(k)),...keys.filter(k=>!top.includes(k)).sort()].map(k=>`<option value="${k}" ${k===sel?"selected":""}>${k}</option>`).join("")}
 function seasonData(){
   if(S.season==="Cool Summer"||!S.seasonAI){const tx=S.lang==="ru"?CS_TEXT.ru:CS_TEXT.en;return{desc:dl(CS_TEXT.en.desc,CS_TEXT.ru.desc,"cs.desc"),makeup:tx.makeup,hair:tx.hair,local:S.lang==="ru"?CS_TEXT.ru.nameLocal:""}}
   const a=S.seasonAI;return{desc:a.description,makeup:a.makeup,hair:a.hair,local:S.lang!=="en"?a.nameRu||"":""};
 }
 function kv(o){return Object.entries(o||{}).map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}
+function renderAvatarIn(el,av,name){el.innerHTML=av?`<img alt="" src="${av}">`:esc((name||"?").trim().charAt(0).toUpperCase()||"?")}
 function renderProfile(){
-  $("nameIn").value=S.name||"";renderAvatar();
+  renderAvatarIn($("avatar"),S.avatar,S.name);$("meName").textContent=S.name||t("prof.namePh");
+  $("meSub").textContent=[S.season,(C_BY[S.shopCountry]||C_BY.PL)[S.lang==="ru"?2:1]].join(" · ");$("prefsBtn").setAttribute("aria-label",t("set.title"));
   const d=seasonData(),pal=palette();
   $("seasonName").innerHTML=esc(S.season)+(d.local?`<small>${esc(d.local)}</small>`:"");
   $("palStrip").innerHTML=pal.map(c=>`<b style="background:${c.hex}" title="${esc(c.name)}"></b>`).join("");
@@ -908,34 +1001,17 @@ function renderProfile(){
   $("sAvoid").innerHTML=avoidList().slice(0,6).map(a=>`<span><b style="background:${a.hex}"></b>${esc(a.name)}</span>`).join("");
   $("sMakeup").innerHTML=kv(d.makeup);$("sHair").innerHTML=kv(d.hair);
   $("makeupBlock").hidden=$("hairBlock").hidden=S.gender!=="f";
-  segHtml("gender",[["f",t("g.f")],["m",t("g.m")]],S.gender);
-  $("langSel").innerHTML=LANGS.filter(([k])=>sample||k==="en"||k==="ru"||S.tr[k]).map(([k,n])=>`<option value="${k}" ${k===S.lang?"selected":""}>${n}</option>`).join("");
-  $("langHint").textContent=!["en","ru"].includes(S.lang)&&S.tr[S.lang]?t("lang.ai"):"";
-  $("shopCountry").innerHTML=COUNTRIES.map(c=>`<option value="${c[0]}" ${c[0]===S.shopCountry?"selected":""}>${esc(S.lang==="ru"?c[2]:c[1])}</option>`).join("");
-  $("curSel").innerHTML=curOptions(S.currency);
-  $("geoHint").textContent=S.geo?.src==="ip"?t("geo.ip",{x:S.geo.label}):S.geo?.src==="manual"?t("geo.manual"):t("geo.tz",{x:S.geo?.label||"—"});
-  $("ipBtn").hidden=!mcp;
   $("analyzeBtn").hidden=!sample;
   document.querySelector('nav.tabs a[data-v="stylist"]').hidden=!sample;document.querySelector("nav.tabs .in").style.gridTemplateColumns=`repeat(${sample?5:4},1fr)`;
 }
 const pal=$("pal");pal.onclick=()=>{pal.classList.toggle("open");pal.setAttribute("aria-expanded",pal.classList.contains("open"))};
 pal.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pal.click()}};
-$("gender").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.gender=k;persist();renderAll()};
 $("bodySel").onchange=e=>{S.body=e.target.value;persist()};
 $("kibbeSel").onchange=e=>{if(S.typeSys==="larson")S.larson=e.target.value;else S.kibbe=e.target.value;persist()};
 $("tySys").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.typeSys=k;persist();renderProfile()};
 $("noteIn").onchange=e=>{S.note=e.target.value.trim();persist()};
-$("curSel").onchange=e=>{S.currency=e.target.value;S.geo={src:"manual"};persist();renderAll()};
-$("shopCountry").onchange=e=>{const old=shopCur();S.shopCountry=e.target.value;S.stores=[...new Set([...S.stores,...STORES.filter(s=>s.only?.includes(S.shopCountry)).map(s=>s.id)])];const nc=shopCur();if(old!==nc){S.pmin=niceRound(convert(S.pmin,old,nc)||0);S.pmax=niceRound(convert(S.pmax,old,nc)||0)}persist();renderAll()};
 $("analyzeBtn").onclick=()=>openAnalyzer();
 $("checkBtn2").onclick=()=>{S.shSeg="check";persist();location.hash="shop";renderShop()};
-$("ipBtn").onclick=async()=>{
-  const b=$("ipBtn");b.disabled=true;
-  try{const r=await readJsonPage("https://ipapi.co/json/");const cc=String(r.country_code||"").toUpperCase();
-    if(cc==="BY"){S.shopCountry="PL";S.currency="BYN"}else if(C_BY[cc]){S.shopCountry=cc;S.currency=C_BY[cc][3]}else{const cur=String(r.currency||"").toUpperCase();if(S.rates.byn[cur])S.currency=cur}
-    S.geo={src:"ip",label:[r.city,r.country_name].filter(Boolean).join(", ")};S.pmax=niceRound(convert(2000,"PLN",shopCur()));persist();renderAll();
-  }catch(e){$("geoHint").textContent=brErr(e)}finally{b.disabled=false}
-};
 const SEASON_JSON=()=>`Write all text in ${langName()}. Reply with ONLY JSON:
 {"name":"<one of the 12 seasons in English>","nameRu":"<season name in ${langName()}>","confidence":"<high|medium|low in ${langName()}>","description":"<3-4 sentences: undertone, contrast, depth, chroma>","wear":[["<colour name>","#RRGGBB"], ...exactly 24],"avoid":[["<colour name>","#RRGGBB"], ...exactly 6],"makeup":{"<Lips>":"...","<Blush>":"...","<Eyes>":"...","<Brows>":"...","<Base>":"..."},"hair":{"<Best>":"...","<Avoid>":"..."}}`;
 function appearance(){const b=BODY.find(x=>x[0]===S.body),k=S.typeSys==="larson"?LARSON.find(x=>x[0]===S.larson):KIBBE.find(x=>x[0]===S.kibbe);return[b?"Body shape: "+b[1]:"",k?(S.typeSys==="larson"?"Larson":"Kibbe")+" type: "+k[1]:"",S.note?"Note from the user: "+S.note:""].filter(Boolean).join(". ")}
@@ -967,19 +1043,6 @@ function openAnalyzer(){
     }catch(err){$("faceOut").innerHTML=`<div class="msg">${esc(errText(err))}</div>`;$("faceGo").disabled=false}
   };
 }
-$("langSel").onchange=async e=>{
-  const lg=e.target.value;
-  if(lg==="en"||lg==="ru"||S.tr[lg]){S.lang=lg;persist();renderAll();return}
-  if(!sample){$("langHint").textContent=t("lang.needAi");e.target.value=S.lang;return}
-  $("langHint").textContent=t("lang.translating");
-  const dict={...EN};CS_PAL.forEach(([k,,,en])=>dict["c."+k]=en);TYPES.forEach(([k,,,en])=>dict["i."+k]=en);
-  STYLE_TAGS.forEach(([k,en])=>dict["s."+k]=en);AVOID_TAGS.forEach(([k,en])=>dict["a."+k]=en);BODY.forEach(([k,en])=>dict["b."+k]=en);KIBBE.forEach(([k,en])=>dict["k."+k]=en);LARSON.forEach(([k,en])=>dict["lr."+k]=en);
-  LOOKS.forEach(([id,en])=>dict["l."+id]=en);CS_AVOID.forEach(([,en])=>dict["av."+en]=en);dict["cs.desc"]=CS_TEXT.en.desc;
-  const name=LANGS.find(x=>x[0]===lg)[1];
-  try{const r=await sample.json(`Translate the values of this JSON object from English into ${name} for a fashion app UI. Keep keys and {placeholders} unchanged; short and natural. Reply with ONLY the JSON object.\n\n${JSON.stringify(dict)}`,{cache:{gcTime:86400000}});
-    if(!r||typeof r!=="object")throw{code:"invalid_json"};S.tr[lg]=r;S.lang=lg;persist();renderAll();
-  }catch(err){$("langHint").textContent=errText(err);e.target.value=S.lang}
-};
 
 /* ================= WARDROBE ================= */
 function scoreBadge(r){return`<span class="score"><i style="background:${LVL_COLOR[r.lvl]}"></i>${r.score}%</span>`}
@@ -1192,11 +1255,11 @@ function tempCat(day){if(day.tcat)return day.tcat;const tm=(day.tmax+day.tmin)/2
 function weekDays(){const have=Object.fromEntries((S.week.days||[]).map(d=>[d.date,d]));return[0,1,2,3,4,5,6].map(i=>{const date=todayISO(i);return have[date]||{date,manual:true,tcat:S.week.tcat?.[date]||"cool"}})}
 function renderWeek(){
   $("cityIn").value=S.week.city||"";$("cityIn").placeholder=S.shopCountry==="PL"&&S.currency==="BYN"?"Minsk":"Lisbon";$("wxBtn").hidden=!mcp;
-  const nw=S.week.now;$("wxHint").textContent=mcp?(S.week.city&&S.week.days?.length?t("week.loaded",{c:S.week.city})+(nw?` · ${t("week.now")} ${Math.round(nw.t)}°C`:""):""):t("week.noBrowser");
+  const nw=S.week.now;$("wxHint").textContent=mcp?(S.week.city&&S.week.days?.length?t("week.loaded",{c:S.week.city})+(nw?` · ${t("week.now")} ${fmtT(nw.t)}`:""):""):t("week.noBrowser");
   $("geoBtn").hidden=!(mcp?.direct&&navigator.geolocation);
   $("weekDays").innerHTML=weekDays().map(d=>{const occ=S.week.occ?.[d.date]||(new Date(d.date+"T12:00").getDay()%6===0?"weekend":"office");const plan=S.week.plan?.[d.date];
     const wx=d.manual?`<div class="chips">${["cold","cool","warm"].map(k=>`<button type="button" class="chip" data-tc="${d.date}|${k}" aria-pressed="${tempCat(d)===k}">${esc(t("temp."+k))}</button>`).join("")}</div>`
-      :`<span class="wx">${WX_ICON[wxKind(d)]}${Math.round(d.tmin)}…${Math.round(d.tmax)}°C${d.pp>=30?` · ${d.pp}%`:""}</span>`;
+      :`<span class="wx">${WX_ICON[wxKind(d)]}${fmtT(d.tmin)}…${fmtT(d.tmax)}${d.pp>=30?` · ${d.pp}%`:""}</span>`;
     return`<div class="day"><div class="d">${esc(dateStr(d.date,{weekday:"short"}))}<small>${esc(dateStr(d.date,{day:"numeric",month:"short"}))}</small></div><div style="min-width:0">${wx}
       <div class="chips">${OCC.map(o=>`<button type="button" class="chip" data-oc="${d.date}|${o}" aria-pressed="${occ===o}">${esc(t("occ."+o))}</button>`).join("")}</div>
       ${plan?`<button class="day-look" type="button" data-pl="${d.date}"><span class="mini">${plan.items.slice(0,4).map(pieceFrom).map(p=>`<span style="background:${tileBg(p.hex)}">${pieceVis(p)}</span>`).join("")}</span><b>${esc(plan.name)}</b></button>`:""}</div></div>`}).join("");
@@ -1259,7 +1322,7 @@ function renderTrip(){
   $("tripPurpose").innerHTML=PURPOSES.map(p=>`<button type="button" class="chip" data-p="${p}" aria-pressed="${T.purpose===p}">${esc(t("purp."+p))}</button>`).join("");
   const R=T.result;if(!R){$("tripOut").innerHTML="";return}
   $("tripOut").innerHTML=`<div class="card">${R.place?`<h3>${esc(R.place)}</h3>`:""}${R.weather?`<p style="margin-bottom:8px">${esc(R.weather)}</p>`:""}
-    ${R.days?.length?`<div class="chips">${R.days.map(d=>`<span class="chip" style="display:flex;gap:6px;align-items:center">${esc(dateStr(d.date,{day:"numeric",month:"short"}))} ${WX_ICON[wxKind(d)].replace('<svg','<svg width="16" height="16"')} ${Math.round(d.tmax)}°</span>`).join("")}</div>`:""}</div>
+    ${R.days?.length?`<div class="chips">${R.days.map(d=>`<span class="chip" style="display:flex;gap:6px;align-items:center">${esc(dateStr(d.date,{day:"numeric",month:"short"}))} ${WX_ICON[wxKind(d)].replace('<svg','<svg width="16" height="16"')} ${fmtT(d.tmax)}</span>`).join("")}</div>`:""}</div>
     <div class="card"><h3>${esc(t("trip.pack"))}</h3><div class="pack">${(R.groups||[]).map((g,gi)=>`<div><h4>${esc(g.title)}</h4>${g.items.map((it,ii)=>`<label><input type="checkbox" data-ck="${gi}-${ii}" ${R.done?.[gi+"-"+ii]?"checked":""}>${esc(it)}</label>`).join("")}</div>`).join("")}</div></div>
     ${R.looks?.length?`<h3 style="margin:14px 0 8px">${esc(t("trip.looks"))}</h3><div class="looks" id="tripLooks">${R.looks.map((l,i)=>lookCard(l,"t",i)).join("")}</div>`:""}`;
   const tl=$("tripLooks");if(tl)tl.onclick=e=>{const c=e.target.closest(".look");if(c&&!e.target.closest(".heart"))openLook(R.looks[+c.dataset.i])};
@@ -1464,6 +1527,108 @@ function openConverter(){
   upd();
 }
 
+
+/* ================= SETTINGS ================= */
+let D=null;
+const fmtT=c=>S.tempUnit==="F"?Math.round(c*9/5+32)+"°F":Math.round(c)+"°C";
+function applyTheme(){const r=document.documentElement;if(S.theme==="light"||S.theme==="dark")r.dataset.theme=S.theme;else if(!window.claude)r.removeAttribute("data-theme")}
+function startPrefs(){D=JSON.parse(JSON.stringify({avatar:S.avatar,name:S.name,gender:S.gender,lang:S.lang,shopCountry:S.shopCountry,currency:S.currency,geo:S.geo,notif:S.notif,theme:S.theme,tempUnit:S.tempUnit,city:S.week.city||"",useGeo:S.useGeo,segs:S.segs}));renderPrefs()}
+function dirty(){if(!D)return false;const c=JSON.parse(JSON.stringify({avatar:S.avatar,name:S.name,gender:S.gender,lang:S.lang,shopCountry:S.shopCountry,currency:S.currency,geo:S.geo,notif:S.notif,theme:S.theme,tempUnit:S.tempUnit,city:S.week.city||"",useGeo:S.useGeo,segs:S.segs}));return JSON.stringify(c)!==JSON.stringify(D)}
+function markDirty(){$("saveNote").textContent=dirty()?t("set.unsaved"):"";$("prefSave").disabled=!dirty()}
+function renderPrefs(){
+  if(!D)return;
+  renderAvatarIn($("pAvatar"),D.avatar,D.name);$("avRemove").hidden=!D.avatar;$("nameIn").value=D.name||"";
+  segHtml("gender",[["f",t("g.f")],["m",t("g.m")]],D.gender);
+  $("langSel").innerHTML=LANGS.filter(([k])=>sample||k==="en"||k==="ru"||S.tr[k]).map(([k,n])=>`<option value="${k}" ${k===D.lang?"selected":""}>${n}</option>`).join("");
+  $("langHint").textContent=!["en","ru"].includes(D.lang)&&S.tr[D.lang]?t("lang.ai"):"";
+  $("shopCountry").innerHTML=COUNTRIES.map(c=>`<option value="${c[0]}" ${c[0]===D.shopCountry?"selected":""}>${esc(S.lang==="ru"?c[2]:c[1])}</option>`).join("");
+  $("curSel").innerHTML=curOptions(D.currency);
+  $("geoHint").textContent=D.geo?.src==="ip"?t("geo.ip",{x:D.geo.label}):D.geo?.src==="manual"?t("geo.manual"):t("geo.tz",{x:D.geo?.label||"—"});
+  $("ipBtn").hidden=!mcp;
+  $("nDaily").checked=!!D.notif.daily;$("nTime").value=D.notif.time||"08:00";$("nTime").disabled=!D.notif.daily;$("nWeather").checked=!!D.notif.weather;$("nDiary").checked=!!D.notif.diary;
+  const np=("Notification" in window)?Notification.permission:"na";
+  $("nHint").textContent=window.claude?t("set.notifNA"):np==="denied"?t("set.notifDenied"):np==="na"?t("set.notifNA"):t("set.notifHint");
+  segHtml("tUnit",[["C","°C"],["F","°F"]],D.tempUnit);
+  $("prefCity").value=D.city;$("prefGeo").checked=!!D.useGeo;$("prefGeo").closest("label").hidden=!(mcp?.direct&&navigator.geolocation);
+  segHtml("prefSegs",SEGS.map(k=>[k,t("seg."+k)]),"");$("prefSegs").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",D.segs.includes(b.dataset.k)));
+  segHtml("themeSeg",[["auto",t("theme.auto")],["light",t("theme.light")],["dark",t("theme.dark")]],D.theme);
+  $("exportBtn").hidden=!!window.claude;$("aboutLine").textContent="Undertone · v7 · "+t("set.local");
+  markDirty();
+}
+async function pickAvatar(file){if(!file)return;const img=await loadImage(file);const c=document.createElement("canvas"),sz=320;c.width=c.height=sz;const k=Math.max(sz/img.width,sz/img.height),w=img.width*k,h=img.height*k;c.getContext("2d").drawImage(img,(sz-w)/2,(sz-h)/2,w,h);try{D.avatar=c.toDataURL("image/jpeg",.85)}catch(e){}renderPrefs()}
+$("avGallery").onchange=e=>{pickAvatar(e.target.files[0]);e.target.value=""};
+$("avCamera").onchange=e=>{pickAvatar(e.target.files[0]);e.target.value=""};
+$("avRemove").onclick=()=>{D.avatar="";renderPrefs()};
+$("nameIn").oninput=()=>{D.name=$("nameIn").value.trim();renderAvatarIn($("pAvatar"),D.avatar,D.name);markDirty()};
+$("gender").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;D.gender=k;renderPrefs()};
+$("shopCountry").onchange=e=>{D.shopCountry=e.target.value;if(D.geo?.src!=="manual"){const c=C_BY[D.shopCountry];if(c&&!(D.shopCountry==="PL"&&D.currency==="BYN"))D.currency=c[3]}renderPrefs()};
+$("curSel").onchange=e=>{D.currency=e.target.value;D.geo={src:"manual"};renderPrefs()};
+$("ipBtn").onclick=async()=>{const b=$("ipBtn");b.disabled=true;
+  try{const r=await readJsonPage("https://ipapi.co/json/");const cc=String(r.country_code||"").toUpperCase();
+    if(cc==="BY"){D.shopCountry="PL";D.currency="BYN"}else if(C_BY[cc]){D.shopCountry=cc;D.currency=C_BY[cc][3]}else{const cur=String(r.currency||"").toUpperCase();if(S.rates.byn[cur])D.currency=cur}
+    D.geo={src:"ip",label:[r.city,r.country_name].filter(Boolean).join(", ")};renderPrefs()}catch(e){$("geoHint").textContent=brErr(e)}finally{b.disabled=false}};
+$("langSel").onchange=async e=>{
+  const lg=e.target.value;
+  if(lg==="en"||lg==="ru"||S.tr[lg]){D.lang=lg;renderPrefs();return}
+  if(!sample){$("langHint").textContent=t("lang.needAi");e.target.value=D.lang;return}
+  $("langHint").textContent=t("lang.translating");
+  const dict={...EN};CS_PAL.forEach(([k,,,en])=>dict["c."+k]=en);TYPES.forEach(([k,,,en])=>dict["i."+k]=en);
+  STYLE_TAGS.forEach(([k,en])=>dict["s."+k]=en);AVOID_TAGS.forEach(([k,en])=>dict["a."+k]=en);BODY.forEach(([k,en])=>dict["b."+k]=en);KIBBE.forEach(([k,en])=>dict["k."+k]=en);LARSON.forEach(([k,en])=>dict["lr."+k]=en);
+  LOOKS.forEach(([id,en])=>dict["l."+id]=en);CS_AVOID.forEach(([,en])=>dict["av."+en]=en);dict["cs.desc"]=CS_TEXT.en.desc;
+  const name=LANGS.find(x=>x[0]===lg)[1];
+  try{const r=await sample.json(`Translate the values of this JSON object from English into ${name} for a fashion app UI. Keep keys and {placeholders} unchanged; short and natural. Reply with ONLY the JSON object.\n\n${JSON.stringify(dict)}`,{cache:{gcTime:86400000}});
+    if(!r||typeof r!=="object")throw{code:"invalid_json"};S.tr[lg]=r;persist();D.lang=lg;renderPrefs();
+  }catch(err){$("langHint").textContent=errText(err);e.target.value=D.lang}
+};
+$("nDaily").onchange=async e=>{D.notif.daily=e.target.checked;if(e.target.checked)await askNotif();renderPrefs()};
+$("nTime").onchange=e=>{D.notif.time=e.target.value||"08:00";markDirty()};
+$("nWeather").onchange=async e=>{D.notif.weather=e.target.checked;if(e.target.checked)await askNotif();renderPrefs()};
+$("nDiary").onchange=async e=>{D.notif.diary=e.target.checked;if(e.target.checked)await askNotif();renderPrefs()};
+async function askNotif(){try{if("Notification" in window&&Notification.permission==="default")await Notification.requestPermission()}catch(e){}}
+$("tUnit").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;D.tempUnit=k;renderPrefs()};
+$("prefCity").oninput=e=>{D.city=e.target.value.trim();markDirty()};
+$("prefGeo").onchange=e=>{D.useGeo=e.target.checked;markDirty()};
+$("prefSegs").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;if(D.segs.includes(k)){if(D.segs.length>1)D.segs=D.segs.filter(x=>x!==k)}else D.segs=[...D.segs,k];renderPrefs()};
+$("themeSeg").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;D.theme=k;renderPrefs()};
+$("prefCancel").onclick=()=>{startPrefs()};
+function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1800)}
+$("prefSave").onclick=()=>{
+  if(!D)return;const oldCur=shopCur(),cityChanged=(S.week.city||"")!==D.city,geoOn=D.useGeo&&!S.useGeo;
+  Object.assign(S,{avatar:D.avatar,name:D.name,gender:D.gender,lang:D.lang,shopCountry:D.shopCountry,currency:D.currency,geo:D.geo,notif:D.notif,theme:D.theme,tempUnit:D.tempUnit,useGeo:D.useGeo,segs:D.segs});
+  S.stores=[...new Set([...S.stores,...STORES.filter(s=>s.only?.includes(S.shopCountry)).map(s=>s.id)])];
+  const nc=shopCur();if(oldCur!==nc){S.pmin=niceRound(convert(S.pmin,oldCur,nc)||0);S.pmax=niceRound(convert(S.pmax,oldCur,nc)||0)}
+  if(cityChanged){S.week.city=D.city;S.week.lat=null;S.week.days=[];S.week.now=null}
+  persist();renderAll();startPrefs();toast(t("set.saved"));
+  if(geoOn)geoWeather(true);else if(cityChanged&&D.city&&mcp)forecast(D.city,null,7).then(r=>{Object.assign(S.week,{days:r.days,city:r.place,lat:r.lat,lon:r.lon,now:r.now});persist();renderWeek()}).catch(()=>{});
+};
+window.addEventListener("beforeunload",e=>{if(location.hash==="#prefs"&&dirty()){e.preventDefault();e.returnValue=""}});
+/* data */
+$("exportBtn").onclick=async()=>{const imgs={};for(const w of S.wardrobe)imgs["img:"+w.id]=await IDB.get("img:"+w.id);for(const d of S.diary)imgs["img:"+d.id]=await IDB.get("img:"+d.id);
+  const blob=new Blob([JSON.stringify({app:"undertone",v:7,state:S,imgs})],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`undertone-backup-${todayISO()}.json`;document.body.appendChild(a);a.click();a.remove();$("dataHint").textContent=t("set.exported")};
+$("importFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{const j=JSON.parse(await f.text());if(j.app!=="undertone"||!j.state)throw 0;for(const[k,v]of Object.entries(j.imgs||{}))if(v)await IDB.set(k,v);
+    Object.assign(S,j.state);persist();renderAll();startPrefs();toast(t("set.imported"))}catch(err){$("dataHint").textContent=t("set.importFail")}};
+$("resetBtn").onclick=()=>{$("resetConfirm").hidden=false};
+$("resetNo").onclick=()=>{$("resetConfirm").hidden=true};
+$("resetYes").onclick=async()=>{for(const w of S.wardrobe)await IDB.del("img:"+w.id);for(const d of S.diary)await IDB.del("img:"+d.id);try{localStorage.removeItem(LS);localStorage.removeItem("undertone.v3")}catch(e){}location.hash="profile";location.reload()};
+/* notifications (standalone app) */
+async function notify(title,body,tag){try{const reg=await navigator.serviceWorker?.getRegistration();if(reg)await reg.showNotification(title,{body,tag,icon:"icon-192.png",badge:"icon-192.png"});else new Notification(title,{body,tag})}catch(e){}}
+async function maybeNotify(){
+  if(window.claude||!("Notification" in window)||Notification.permission!=="granted")return;
+  const N=S.notif,today=todayISO(),now=new Date(),hm=now.toTimeString().slice(0,5);N.last=N.last||{};
+  if(S.week.lat!=null)await autoWeather();
+  const day=(S.week.days||[]).find(d=>d.date===today);
+  if(N.daily&&hm>=(N.time||"08:00")&&N.last.daily!==today){
+    const plan=S.week.plan?.[today]||pickLook(new Date().getDay()%6===0?"weekend":"office",day?tempCat(day):"cool",day&&wxKind(day)==="rain",new Set());
+    const wx=day?` · ${fmtT(day.tmin)}…${fmtT(day.tmax)}`:"";
+    await notify(t("notif.dailyTitle"),`${plan.name}${wx}`,"daily");N.last.daily=today;persist();
+  }
+  if(N.weather&&day&&N.last.weather!==today&&(wxKind(day)==="rain"||day.tmin<0)){await notify(t("notif.wxTitle"),wxKind(day)==="rain"?t("notif.rain",{p:day.pp}):t("notif.cold",{t:fmtT(day.tmin)}),"weather");N.last.weather=today;persist()}
+  if(N.diary&&hm>="19:00"&&N.last.diary!==today&&!S.diary.some(d=>d.date===today)){await notify(t("notif.diaryTitle"),t("notif.diary"),"diary");N.last.diary=today;persist()}
+}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){autoWeather();maybeNotify()}});
+setInterval(maybeNotify,5*60e3);
+
 /* ================= sheets / saved / routing ================= */
 function openSheet(html){const r=$("sheetRoot");r.innerHTML=`<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`;$("scrim").onclick=e=>{if(e.target.id==="scrim")closeSheet()};r.querySelector(".closex")?.addEventListener("click",closeSheet)}
 function closeSheet(){$("sheetRoot").innerHTML=""}
@@ -1472,16 +1637,20 @@ function renderSaved(){
   $("savedLooks").innerHTML=S.favLooks.map((l,i)=>lookCard(l,"f",i)).join("");$("savedLooks").hidden=!S.favLooks.length;
   $("saved").innerHTML=S.favs.length?S.favs.map((it,i)=>cardHtml(it,"f",i)).join(""):(S.favLooks.length?"":`<div class="empty">${esc(t("saved.empty"))}</div>`);
 }
-const VIEWS=["profile","wardrobe","style","shop","stylist","saved"];
+const VIEWS=["profile","prefs","wardrobe","style","shop","stylist","saved"];
 function route(){
   const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"profile";
-  VIEWS.forEach(k=>$("v-"+k).hidden=k!==v);$("composer").hidden=v!=="stylist";
-  document.querySelectorAll("nav.tabs a").forEach(a=>a.dataset.v===v?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
-  window.scrollTo(0,0);
+  if(v==="prefs"&&prevView!=="prefs")startPrefs();prevView=v;
+  VIEWS.forEach(k=>$("v-"+k).hidden=k!==v);$("composer").hidden=v!=="stylist";$("saveBar").hidden=v!=="prefs";
+  const tv=v==="prefs"?"profile":v;
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.dataset.v===tv?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  $("app").querySelector("main").scrollTop=0;
 }
 window.addEventListener("hashchange",route);
-function renderAll(){applyI18n();renderHeader();renderProfile();renderWardrobe();renderStyle();renderShop();renderChat();renderSaved();hydrateImgs()}
+let prevView="";
+function renderAll(){applyTheme();applyI18n();renderHeader();renderProfile();renderWardrobe();renderStyle();renderShop();renderChat();renderSaved();hydrateImgs()}
 renderAll();route();
+setTimeout(()=>{const p=$("preload");if(p){p.classList.add("out");setTimeout(()=>p.remove(),400)}},700);
 
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
