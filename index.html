@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#F5F5F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#F3F2EE" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F1013" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Undertone — clothes, outfits and shopping matched to your colour type.">
 <link rel="manifest" href="manifest.webmanifest">
@@ -350,7 +350,7 @@ nav.tabs a[aria-current="page"] > span::after{content:"";position:absolute;left:
 .sheet{border-radius:0;background:var(--bg)}
 .sheet h4{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.01em}
 .closex{background:transparent;border-radius:0;font-size:10.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase}
-.toast{border-radius:0;font-weight:500;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.toast{border-radius:0;font-weight:500;font-size:11px;letter-spacing:.16em;text-transform:uppercase;max-width:86vw;width:max-content;text-align:center;line-height:1.5}
 .savebar{background:var(--bg)}
 /* preloader monogram */
 .preload .box{gap:18px}
@@ -621,7 +621,7 @@ const EN={
 "set.look":"Appearance","set.theme":"Theme","theme.auto":"Auto","theme.light":"Light","theme.dark":"Dark",
 "set.data":"Data","set.dataHint":"Everything is stored only on this device. Make a backup before changing phones.","set.export":"Download backup","set.import":"Restore from backup","set.reset":"Delete all my data","set.resetConfirm":"This deletes your profile, wardrobe photos, diary and saved items on this device. It can't be undone.","set.resetYes":"Delete everything",
 "set.exported":"Backup downloaded.","set.imported":"Data restored","set.importFail":"This file isn't an Undertone backup.","set.local":"data stays on your device",
-"set.save":"Save","set.cancel":"Cancel","set.saved":"Saved","set.unsaved":"Unsaved changes",
+"set.save":"Save","set.cancel":"Cancel","set.saved":"Saved","set.noStore":"Saved for this session only: this browser does not allow storing data","set.unsaved":"Unsaved changes",
 "notif.dailyTitle":"Today's outfit","notif.wxTitle":"Weather today","notif.rain":"Rain is likely ({p}%) — take an umbrella and a trench.","notif.cold":"Frost down to {t} — warm coat and boots.","notif.diaryTitle":"Outfit diary","notif.diary":"Take a selfie of today's outfit.",
 "tab.profile":"Profile","tab.wardrobe":"Wardrobe","tab.style":"Style","tab.shop":"Shop","tab.stylist":"Stylist","close":"Close","del":"Delete","wait":"Working…",
 "prof.namePh":"Your name","prof.gallery":"Gallery","prof.camera":"Camera","prof.myType":"My colour type","prof.byPhoto":"Find out from a photo","prof.checkItem":"Check an item",
@@ -675,7 +675,7 @@ const RU={
 "set.look":"Оформление","set.theme":"Тема","theme.auto":"Авто","theme.light":"Светлая","theme.dark":"Тёмная",
 "set.data":"Данные","set.dataHint":"Всё хранится только на этом устройстве. Перед сменой телефона сделай резервную копию.","set.export":"Скачать резервную копию","set.import":"Восстановить из копии","set.reset":"Удалить все мои данные","set.resetConfirm":"Будут удалены профиль, фото гардероба, дневник и избранное на этом устройстве. Отменить нельзя.","set.resetYes":"Удалить всё",
 "set.exported":"Резервная копия скачана.","set.imported":"Данные восстановлены","set.importFail":"Это не файл резервной копии Undertone.","set.local":"данные хранятся на твоём устройстве",
-"set.save":"Сохранить","set.cancel":"Отменить","set.saved":"Сохранено","set.unsaved":"Есть несохранённые изменения",
+"set.save":"Сохранить","set.cancel":"Отменить","set.saved":"Сохранено","set.noStore":"Сохранено только до закрытия: этот браузер не даёт хранить данные","set.unsaved":"Есть несохранённые изменения",
 "notif.dailyTitle":"Образ дня","notif.wxTitle":"Погода сегодня","notif.rain":"Вероятен дождь ({p}%) — возьми зонт и тренч.","notif.cold":"Мороз до {t} — тёплое пальто и сапоги.","notif.diaryTitle":"Дневник образов","notif.diary":"Сделай селфи сегодняшнего образа.",
 "tab.profile":"Профиль","tab.wardrobe":"Гардероб","tab.style":"Стиль","tab.shop":"Подбор","tab.stylist":"Стилист","close":"Закрыть","del":"Удалить","wait":"Секунду…",
 "prof.namePh":"Твоё имя","prof.gallery":"Галерея","prof.camera":"Камера","prof.myType":"Мой цветотип","prof.byPhoto":"Определить по фото","prof.checkItem":"Проверить вещь",
@@ -847,7 +847,9 @@ const SK={"coat":{"l":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALUAAAFoBAM
 /* ================= state ================= */
 const LS="undertone.v4";
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}}
-function persist(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+let storeOK=true;
+function persist(){try{localStorage.setItem(LS,JSON.stringify(S));if(JSON.parse(localStorage.getItem(LS)).name!==S.name)throw 0;storeOK=true}catch(e){storeOK=false}return storeOK}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 function detectLocale(){
   let tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(e){}
   const nl=(navigator.language||"en").toLowerCase();
@@ -1638,9 +1640,10 @@ function openConverter(){
 let D=null;
 const fmtT=c=>S.tempUnit==="F"?Math.round(c*9/5+32)+"°F":Math.round(c)+"°C";
 function applyTheme(){const r=document.documentElement;r.dataset.tone=/Spring|Autumn/.test(S.season)?"warm":"cool";if(S.theme==="light"||S.theme==="dark")r.dataset.theme=S.theme;else if(!window.claude)r.removeAttribute("data-theme")}
-function startPrefs(){D=JSON.parse(JSON.stringify({avatar:S.avatar,name:S.name,gender:S.gender,lang:S.lang,shopCountry:S.shopCountry,currency:S.currency,geo:S.geo,notif:S.notif,theme:S.theme,tempUnit:S.tempUnit,city:S.week.city||"",useGeo:S.useGeo,segs:S.segs}));renderPrefs()}
+const DRAFT="undertone.draft";
+function startPrefs(fresh){const dr=fresh?null:lsGet(DRAFT);D=dr||JSON.parse(JSON.stringify({avatar:S.avatar,name:S.name,gender:S.gender,lang:S.lang,shopCountry:S.shopCountry,currency:S.currency,geo:S.geo,notif:S.notif,theme:S.theme,tempUnit:S.tempUnit,city:S.week.city||"",useGeo:S.useGeo,segs:S.segs}));renderPrefs()}
 function dirty(){if(!D)return false;const c=JSON.parse(JSON.stringify({avatar:S.avatar,name:S.name,gender:S.gender,lang:S.lang,shopCountry:S.shopCountry,currency:S.currency,geo:S.geo,notif:S.notif,theme:S.theme,tempUnit:S.tempUnit,city:S.week.city||"",useGeo:S.useGeo,segs:S.segs}));return JSON.stringify(c)!==JSON.stringify(D)}
-function markDirty(){$("saveNote").textContent=dirty()?t("set.unsaved"):"";$("prefSave").disabled=!dirty()}
+function markDirty(){const d=dirty();$("saveNote").textContent=d?t("set.unsaved"):"";$("prefSave").disabled=!d;try{d?localStorage.setItem(DRAFT,JSON.stringify(D)):localStorage.removeItem(DRAFT)}catch(e){}}
 function renderPrefs(){
   if(!D)return;
   renderAvatarIn($("pAvatar"),D.avatar,D.name);$("avRemove").hidden=!D.avatar;$("nameIn").value=D.name||"";
@@ -1696,15 +1699,15 @@ $("prefCity").oninput=e=>{D.city=e.target.value.trim();markDirty()};
 $("prefGeo").onchange=e=>{D.useGeo=e.target.checked;markDirty()};
 $("prefSegs").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;if(D.segs.includes(k)){if(D.segs.length>1)D.segs=D.segs.filter(x=>x!==k)}else D.segs=[...D.segs,k];renderPrefs()};
 $("themeSeg").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;D.theme=k;renderPrefs()};
-$("prefCancel").onclick=()=>{startPrefs()};
-function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1800)}
+$("prefCancel").onclick=()=>{try{localStorage.removeItem(DRAFT)}catch(e){}startPrefs(true)};
+function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),msg.length>20?4500:1800)}
 $("prefSave").onclick=()=>{
   if(!D)return;const oldCur=shopCur(),cityChanged=(S.week.city||"")!==D.city,geoOn=D.useGeo&&!S.useGeo;
   Object.assign(S,{avatar:D.avatar,name:D.name,gender:D.gender,lang:D.lang,shopCountry:D.shopCountry,currency:D.currency,geo:D.geo,notif:D.notif,theme:D.theme,tempUnit:D.tempUnit,useGeo:D.useGeo,segs:D.segs});
   S.stores=[...new Set([...S.stores,...STORES.filter(s=>s.only?.includes(S.shopCountry)).map(s=>s.id)])];
   const nc=shopCur();if(oldCur!==nc){S.pmin=niceRound(convert(S.pmin,oldCur,nc)||0);S.pmax=niceRound(convert(S.pmax,oldCur,nc)||0)}
   if(cityChanged){S.week.city=D.city;S.week.lat=null;S.week.days=[];S.week.now=null}
-  persist();renderAll();startPrefs();toast(t("set.saved"));
+  const ok=persist();try{localStorage.removeItem(DRAFT)}catch(e){}renderAll();startPrefs(true);toast(ok?t("set.saved"):t("set.noStore"));if(ok)location.hash="profile";
   if(geoOn)geoWeather(true);else if(cityChanged&&D.city&&mcp)forecast(D.city,null,7).then(r=>{Object.assign(S.week,{days:r.days,city:r.place,lat:r.lat,lon:r.lon,now:r.now});persist();renderWeek()}).catch(()=>{});
 };
 window.addEventListener("beforeunload",e=>{if(location.hash==="#prefs"&&dirty()){e.preventDefault();e.returnValue=""}});
