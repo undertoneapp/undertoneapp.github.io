@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F5F5F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1013" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Undertone — clothes, outfits and shopping matched to your colour type.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Undertone">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Undertone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: utilitarian phone app — sticky header, one view per tab, rounded white cards on soft grey, fixed 5-tab bar */
+:root{
+  --bg:#F5F5F8; --card:#FFFFFF; --sunk:#EFEFF3; --fg:#1B1B21; --muted:#6C6E7D; --line:#E4E4EB;
+  --accent:#7E4A6E; --accent-soft:#F3EAF0; --on-accent:#FFFFFF; --ok:#2F7D6B; --mid:#A8741E; --bad:#B4483C;
+  --skin:#E8DCD6; --skin-line:#CDBDB6;
+  --r:16px; --font:"Manrope","Avenir Next","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1013; --card:#1A1B20; --sunk:#23242A; --fg:#EDEDF1; --muted:#9A9CAA; --line:#2B2D34;
+  --accent:#D9A2C4; --accent-soft:#2D2129; --on-accent:#17171C; --ok:#7CC6B2; --mid:#E0B25E; --bad:#EE9184;
+  --skin:#5A4F4B; --skin-line:#776A65; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1013; --card:#1A1B20; --sunk:#23242A; --fg:#EDEDF1; --muted:#9A9CAA; --line:#2B2D34;
+  --accent:#D9A2C4; --accent-soft:#2D2129; --on-accent:#17171C; --ok:#7CC6B2; --mid:#E0B25E; --bad:#EE9184;
+  --skin:#5A4F4B; --skin-line:#776A65; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px calc(104px + env(safe-area-inset-bottom,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg)}
+header.top .in{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mark{margin:0;font-weight:800;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.mark i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#A9C2DA,#8E99CF,#B6A7CF,#B07A93,#D3A4B0,#A84870,#4F7E86,#78AEA1,#A9C2DA)}
+.hdr-r{display:flex;gap:8px;align-items:center}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;position:relative}
+.icon-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
+.icon-btn .badge{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.pill-btn{height:38px;border-radius:19px;border:0;background:var(--card);padding:0 14px;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+
+h2.view-title{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:16px;font-weight:700}
+.card p{margin:0}
+.eyebrow{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.btn{border:0;border-radius:999px;background:var(--fg);color:var(--bg);padding:11px 18px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.acc{background:var(--accent);color:var(--on-accent)}
+.btn.soft{background:var(--sunk);color:var(--fg)}
+.btn.sm{padding:8px 14px;font-size:13px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8}
+.seg{display:flex;background:var(--sunk);border-radius:12px;padding:3px;gap:2px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:1 0 auto;border:0;background:transparent;border-radius:10px;padding:8px 12px;font-weight:600;font-size:13px;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.wrapchips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip.soft[aria-pressed="true"]{background:var(--accent-soft);color:var(--fg);border-color:var(--accent)}
+.dotchip{flex:none;width:30px;height:30px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1px var(--line);padding:0}
+.dotchip[aria-pressed="true"]{box-shadow:0 0 0 2px var(--fg)}
+.field{display:grid;gap:6px;margin-top:10px}
+.field label,.flabel{font-size:13px;font-weight:600;color:var(--muted)}
+.inp,select.inp,textarea.inp{width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;outline:none;min-width:0}
+textarea.inp{resize:vertical;min-height:70px}
+.inp:focus{border-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.msg{padding:12px 14px;background:var(--sunk);border-radius:12px;font-size:14px;margin:10px 0}
+.loader{height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin:10px 0}
+.loader i{display:block;height:100%;width:30%;background:var(--accent);animation:slide 1.2s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(340%)}}
+
+/* profile */
+.me{display:flex;gap:14px;align-items:center}
+.avatar{width:84px;height:84px;border-radius:50%;overflow:hidden;background:var(--sunk);display:grid;place-items:center;font-size:32px;font-weight:800;color:var(--muted);flex:none;box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--accent-soft)}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.me-r{display:grid;gap:8px;min-width:0;flex:1}
+.me-r input{font-size:20px;font-weight:800;border:0;background:transparent;padding:2px 0;outline:none;width:100%;min-width:0}
+.season-nm{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:2px 0 0}
+.season-nm small{display:block;font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}
+.pal{display:grid;gap:8px;margin-top:12px;cursor:pointer;outline:none}
+.pal-strip{display:flex;height:40px;border-radius:10px;overflow:hidden}
+.pal-strip b{flex:1;transition:flex .2s}
+.pal:hover .pal-strip b:hover{flex:3}
+.pal-cap{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}
+.pal-full{display:none;gap:14px;padding-top:6px}
+.pal:hover .pal-full,.pal:focus-within .pal-full,.pal.open .pal-full{display:grid}
+.pgroup h5{margin:0 0 6px;font-size:12px;font-weight:700;color:var(--muted)}
+.sw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px}
+.sw div{display:grid;gap:4px;font-size:11px;line-height:1.2;color:var(--muted);min-width:0}
+.sw div b{aspect-ratio:1;max-width:100%;border-radius:10px;border:1px solid rgba(0,0,0,.05)}
+.avoid-row{display:flex;gap:6px;flex-wrap:wrap}
+.avoid-row span{display:flex;align-items:center;gap:6px;font-size:13px;background:var(--sunk);padding:4px 10px 4px 4px;border-radius:999px}
+.avoid-row span b{width:18px;height:18px;border-radius:50%;position:relative;overflow:hidden}
+.avoid-row span b::after{content:"";position:absolute;left:-2px;right:-2px;top:50%;height:2px;background:var(--card);transform:rotate(-45deg)}
+dl.kv{margin:0;display:grid;gap:10px}
+dl.kv div{display:grid;grid-template-columns:92px 1fr;gap:10px;font-size:14px}
+dl.kv dt{color:var(--muted);font-weight:600}
+dl.kv dd{margin:0;min-width:0}
+.soon{margin-top:12px;padding:12px;border-radius:12px;background:var(--accent-soft);font-size:13px}
+
+/* grids */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.item{background:var(--card);border:0;border-radius:var(--r);padding:8px 8px 12px;text-align:left;display:flex;flex-direction:column;gap:8px;min-width:0;position:relative}
+.tile{position:relative;aspect-ratio:1/1.1;max-width:100%;width:100%;border-radius:12px;display:grid;place-items:center;overflow:hidden}
+.tile svg.ic{width:62%;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.12))}
+.tile img{width:84%;height:84%;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.15))}
+.heart{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.85);display:grid;place-items:center}
+.heart svg{width:17px;fill:none;stroke:#1B1B21;stroke-width:1.7}
+.heart[aria-pressed="true"] svg{fill:#7E4A6E;stroke:#7E4A6E}
+.score{position:absolute;left:12px;top:12px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.9);color:#1B1B21;display:flex;gap:4px;align-items:center}
+.score i{width:8px;height:8px;border-radius:50%}
+.meta{display:flex;flex-direction:column;gap:2px;min-width:0;padding:0 4px}
+.meta .brand{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta .name{font-size:14px;font-weight:700;line-height:1.25}
+.meta .col{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.meta .col b{width:10px;height:10px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.1)}
+.meta .pr{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.meta .conv{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.add-tile{border:2px dashed var(--line);background:transparent;border-radius:var(--r);display:grid;place-items:center;gap:6px;color:var(--muted);font-weight:700;min-height:180px;padding:12px;text-align:center}
+.add-tile svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.6}
+.empty{padding:22px 16px;color:var(--muted);border:2px dashed var(--line);border-radius:var(--r);font-size:14px;grid-column:1/-1;text-align:center}
+
+/* looks */
+.looks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.look{background:var(--card);border:0;border-radius:var(--r);padding:8px 8px 12px;text-align:left;display:grid;gap:8px;min-width:0;position:relative}
+.board{aspect-ratio:1/1.05;max-width:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;border-radius:12px;overflow:hidden}
+.board > div{display:grid;place-items:center;overflow:hidden}
+.board svg.ic{width:72%;height:auto}
+.board img{width:80%;height:80%;object-fit:contain}
+.look .ttl{font-size:15px;font-weight:700;line-height:1.25;padding:0 4px}
+.look .sub2{font-size:12px;color:var(--muted);padding:0 4px}
+.dots{display:flex;gap:3px;padding:0 4px}
+.dots b{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
+
+/* week & trip */
+.day{display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.day:first-of-type{border-top:0}
+.day .d{font-weight:800;font-size:15px;line-height:1.1}
+.day .d small{display:block;font-weight:600;color:var(--muted);font-size:12px}
+.wx{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.wx svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6}
+.day .chips{padding-top:6px}
+.day .chip{padding:5px 10px;font-size:12px}
+.day-look{display:flex;gap:8px;align-items:center;margin-top:8px;background:var(--sunk);border-radius:12px;padding:6px;border:0;width:100%;text-align:left}
+.day-look .mini{display:flex;gap:3px}
+.day-look .mini span{width:38px;height:42px;border-radius:8px;display:grid;place-items:center;overflow:hidden}
+.day-look .mini svg{width:80%}
+.day-look .mini img{width:80%;height:80%;object-fit:contain}
+.day-look b{font-size:13px}
+.pack{display:grid;gap:14px}
+.pack h4{margin:0 0 6px;font-size:14px}
+.pack label{display:flex;gap:10px;align-items:center;font-size:14px;padding:4px 0}
+.pack input{width:18px;height:18px;accent-color:var(--accent)}
+
+/* check */
+.verdict{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center}
+.verdict img{width:96px;height:120px;object-fit:cover;border-radius:12px;max-width:100%}
+.meter{height:8px;border-radius:4px;background:var(--sunk);overflow:hidden;margin:6px 0}
+.meter i{display:block;height:100%;border-radius:4px}
+.v-ok{color:var(--ok)}.v-mid{color:var(--mid)}.v-bad{color:var(--bad)}
+
+/* chat */
+.chat{display:flex;flex-direction:column;gap:10px;min-height:40vh}
+.bubble{max-width:85%;padding:10px 14px;border-radius:18px;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+.bubble.me{align-self:flex-end;background:var(--fg);color:var(--bg);border-bottom-right-radius:6px}
+.bubble.ai{align-self:flex-start;background:var(--card);border-bottom-left-radius:6px}
+.composer{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:6;background:var(--bg);padding-block:8px}
+.composer .in{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:8px}
+.composer form{display:flex;gap:8px}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:11px 16px;outline:none}
+#v-stylist .wrap-pad{padding-bottom:120px}
+
+/* mannequin */
+.mq-wrap{display:grid;place-items:center;background:var(--sunk);border-radius:var(--r);padding:12px 0}
+.mq-wrap svg{height:360px;max-width:100%}
+
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600}
+nav.tabs a svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6}
+nav.tabs a[aria-current="page"]{color:var(--accent)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,10,14,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:600px;max-height:92%;overflow:auto;border-radius:22px 22px 0 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px calc(24px + env(safe-area-inset-bottom,0px));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:.6}}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.sheet h4{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:4px 0 6px}
+.sheet .tile{aspect-ratio:4/3}
+.sheet .tile svg.ic{width:34%}
+.closex{float:right;border:0;background:var(--card);border-radius:999px;font-size:13px;font-weight:700;padding:6px 12px}
+.why{display:grid;gap:10px;margin:12px 0}
+.why div{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:14px}
+.why svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.7}
+.links{display:grid;gap:8px}
+.links a,.links button{display:flex;justify-content:space-between;align-items:center;gap:12px;border:0;background:var(--card);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--fg);font-size:14px;font-weight:600;text-align:left;width:100%}
+.links a span:last-child,.links button span:last-child{font-size:12px;color:var(--muted);flex:none;font-weight:600}
+.links .mini{display:flex;align-items:center;gap:10px;min-width:0}
+.links .mini b{width:34px;height:40px;flex:none;display:grid;place-items:center;border-radius:8px;overflow:hidden}
+.links .mini b svg{width:80%}
+.links .mini b img{width:80%;height:80%;object-fit:contain}
+.rules{margin:10px 0 14px;padding:0;list-style:none;display:grid;gap:8px}
+.rules li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:14px}
+.rules li::before{content:"✓";color:var(--ok);font-weight:800}
+.preview{display:flex;gap:6px;flex-wrap:wrap}
+.preview img{width:56px;height:72px;object-fit:cover;border-radius:8px;max-width:100%}
+.cutout{display:grid;place-items:center;border-radius:var(--r);min-height:220px;background-color:var(--card);background-image:linear-gradient(45deg,var(--sunk) 25%,transparent 25%,transparent 75%,var(--sunk) 75%),linear-gradient(45deg,var(--sunk) 25%,transparent 25%,transparent 75%,var(--sunk) 75%);background-size:20px 20px;background-position:0 0,10px 10px}
+.cutout canvas{max-width:100%;max-height:300px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.diary{display:grid;gap:12px}
+.entry{display:grid;grid-template-columns:96px 1fr;gap:12px;background:var(--card);border-radius:var(--r);padding:10px}
+.entry img{width:96px;height:128px;object-fit:cover;border-radius:10px;max-width:100%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:540px){.sw{grid-template-columns:repeat(6,minmax(0,1fr))}.grid,.looks{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+
+
+<header class="top"><div class="in">
+  <h1 class="mark"><i></i>undertone</h1>
+  <div class="hdr-r">
+    <button class="icon-btn" id="savedBtn" type="button"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span class="badge" id="favCnt" hidden></span></button>
+    <button class="pill-btn" id="curPill" type="button"></button>
+  </div>
+</div></header>
+
+<main class="wrap">
+<!-- PROFILE -->
+<section id="v-profile">
+  <div class="card">
+    <div class="me">
+      <div class="avatar" id="avatar"></div>
+      <div class="me-r">
+        <input id="nameIn" type="text" autocomplete="name" data-ph="prof.namePh">
+        <div class="row">
+          <label class="btn soft sm" for="avGallery"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg><span data-t="prof.gallery"></span></label>
+          <label class="btn soft sm" for="avCamera"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="prof.camera"></span></label>
+          <input id="avGallery" type="file" accept="image/*" hidden>
+          <input id="avCamera" type="file" accept="image/*" capture="user" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <span class="eyebrow" data-t="prof.myType"></span>
+    <p class="season-nm" id="seasonName"></p>
+    <div class="pal" id="pal" tabindex="0" role="button" aria-expanded="false">
+      <div class="pal-strip" id="palStrip"></div>
+      <div class="pal-cap"><span id="palCount"></span><span data-t="prof.wearHint"></span></div>
+      <div class="pal-full" id="palFull"></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn acc" type="button" id="analyzeBtn" data-t="prof.byPhoto"></button><button class="btn soft" type="button" id="checkBtn2" data-t="prof.checkItem"></button></div>
+  </div>
+  <div class="card">
+    <h3 data-t="prof.know"></h3>
+    <select class="inp" id="seasonSel"></select>
+    <p class="hint" id="seasonHint"></p>
+  </div>
+  <div class="card">
+    <h3 data-t="prof.looks"></h3>
+    <div class="grid2">
+      <div class="field" style="margin:0"><label for="bodySel" data-t="prof.body"></label><select class="inp" id="bodySel"></select></div>
+      <div class="field" style="margin:0"><label for="kibbeSel" data-t="prof.kibbe"></label><select class="inp" id="kibbeSel"></select></div>
+    </div>
+    <div class="field"><label data-t="prof.sys"></label><div class="seg" id="tySys" style="margin:0"></div>
+    </div>
+    <div class="field"><label for="noteIn" data-t="prof.note"></label><textarea class="inp" id="noteIn" data-ph="prof.notePh"></textarea></div>
+  </div>
+  <div class="card"><h3 data-t="prof.about"></h3><p id="sDesc"></p></div>
+  <div class="card"><h3 data-t="prof.avoid"></h3><div class="avoid-row" id="sAvoid"></div><p class="hint" data-t="prof.avoidHint"></p></div>
+  <div class="card" id="makeupBlock"><h3 data-t="prof.makeup"></h3><dl class="kv" id="sMakeup"></dl><div class="soon"><b data-t="prof.soon"></b> · <span data-t="prof.soonText"></span></div></div>
+  <div class="card" id="hairBlock"><h3 data-t="prof.hair"></h3><dl class="kv" id="sHair"></dl></div>
+  <div class="card">
+    <h3 data-t="prof.settings"></h3>
+    <div class="field" style="margin:0"><label data-t="prof.gender"></label><div class="seg" id="gender" style="margin:0"></div></div>
+    <div class="field"><label for="langSel" data-t="prof.lang"></label><select class="inp" id="langSel"></select></div>
+    <p class="hint" id="langHint"></p>
+    <div class="grid2" style="margin-top:4px">
+      <div class="field"><label for="shopCountry" data-t="prof.country"></label><select class="inp" id="shopCountry"></select></div>
+      <div class="field"><label for="curSel" data-t="prof.currency"></label><select class="inp" id="curSel"></select></div>
+    </div>
+    <p class="hint" id="geoHint"></p>
+    <div class="row" style="margin-top:10px"><button class="btn soft sm" type="button" id="ipBtn" data-t="prof.ip"></button></div>
+  </div>
+</section>
+
+<!-- WARDROBE -->
+<section id="v-wardrobe" hidden>
+  <h2 class="view-title" data-t="tab.wardrobe"></h2>
+  <div class="seg" id="wSeg"></div>
+  <div id="wItems">
+    <p class="sub" data-t="ward.lead"></p>
+    <div class="grid" id="wardGrid"></div>
+  </div>
+  <div id="wDiary" hidden>
+    <p class="sub" data-t="diary.lead"></p>
+    <div class="row" style="margin-bottom:12px">
+      <label class="btn acc" for="diaryCam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span data-t="diary.selfie"></span></label>
+      <label class="btn soft" for="diaryGal" data-t="prof.gallery"></label>
+      <input id="diaryCam" type="file" accept="image/*" capture="user" hidden><input id="diaryGal" type="file" accept="image/*" hidden>
+    </div>
+    <div class="diary" id="diaryList"></div>
+  </div>
+</section>
+
+<!-- STYLE -->
+<section id="v-style" hidden>
+  <h2 class="view-title" data-t="tab.style"></h2>
+  <div class="seg" id="sSeg"></div>
+  <div id="sLooks">
+    <div class="chips" id="occChips" style="margin-bottom:10px"></div>
+    <div class="between" style="margin-bottom:10px"><span class="hint" style="margin:0" id="looksNote"></span><button class="btn soft sm" type="button" id="genLooks" data-t="style.gen"></button></div>
+    <div id="looksState"></div>
+    <div class="looks" id="looks"></div>
+  </div>
+  <div id="sWeek" hidden>
+    <div class="card">
+      <div class="field" style="margin:0"><label for="cityIn" data-t="week.city"></label>
+        <div class="row" style="flex-wrap:nowrap"><input class="inp" id="cityIn" type="text"><button class="btn soft sm" id="wxBtn" type="button" data-t="week.load"></button></div></div>
+      <div class="row" style="margin-top:8px"><button class="btn soft sm" id="geoBtn" type="button" hidden><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-t="week.geo"></span></button></div>
+      <p class="hint" id="wxHint"></p>
+    </div>
+    <div class="card" id="weekDays"></div>
+    <div class="row"><button class="btn acc" type="button" id="planBtn" data-t="week.plan"></button><button class="btn soft" type="button" id="planAi" data-t="week.ai"></button></div>
+    <div id="planState"></div>
+  </div>
+  <div id="sTrip" hidden>
+    <div class="card">
+      <div class="field" style="margin:0"><label for="tripCity" data-t="trip.where"></label><input class="inp" id="tripCity" type="text"></div>
+      <div class="grid2"><div class="field"><label for="tripStart" data-t="trip.start"></label><input class="inp" id="tripStart" type="date"></div>
+        <div class="field"><label for="tripNights" data-t="trip.nights"></label><input class="inp" id="tripNights" type="number" min="1" max="30"></div></div>
+      <div class="field"><label data-t="trip.purpose"></label><div class="wrapchips" id="tripPurpose"></div></div>
+      <div class="row" style="margin-top:14px"><button class="btn acc" type="button" id="tripBtn" data-t="trip.plan"></button></div>
+    </div>
+    <div id="tripOut"></div>
+  </div>
+  <div id="sInsp" hidden>
+    <div class="card">
+      <h3 data-t="style.insp"></h3>
+      <div class="field" style="margin:0"><label for="pin" data-t="style.pin"></label><div class="row" style="flex-wrap:nowrap"><input class="inp" id="pin" type="url" placeholder="https://pinterest.com/…"><button class="btn soft sm" type="button" id="pinSave" data-t="style.save"></button></div></div>
+      <a id="pinOpen" class="hint" target="_blank" rel="noopener" hidden style="display:inline-block;color:var(--accent);font-weight:700"></a>
+      <p class="hint" data-t="style.uploadHint"></p>
+      <div class="row" style="margin-top:10px"><label class="btn acc" for="pinsFile" id="pinsLabel"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><span data-t="style.upload"></span></label><input id="pinsFile" type="file" accept="image/*" multiple hidden></div>
+      <div class="preview" id="pinsPrev" style="margin-top:10px"></div>
+      <div id="styleOut"></div>
+    </div>
+    <div class="card">
+      <h3 data-t="style.or"></h3>
+      <span class="flabel" data-t="style.like"></span><div class="wrapchips" id="styleTags" style="margin:6px 0 14px"></div>
+      <span class="flabel" data-t="style.avoid"></span><div class="wrapchips" id="avoidTags" style="margin-top:6px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section id="v-shop" hidden>
+  <h2 class="view-title" data-t="tab.shop"></h2>
+  <div class="seg" id="shSeg"></div>
+  <div id="shCat">
+    <p class="sub" id="shopLead"></p>
+    <input class="inp" id="q" type="search" autocomplete="off" data-ph="shop.search" style="margin-bottom:8px">
+    <div class="chips" id="cats"></div>
+    <div class="chips" id="colorChips" style="padding-top:6px"></div>
+    <details class="card" id="filters" style="margin-top:8px;padding:12px 16px">
+      <summary class="between" style="cursor:pointer;list-style:none"><b data-t="shop.filters"></b><span class="hint" style="margin:0" id="fSummary"></span></summary>
+      <div class="field"><label data-t="shop.segment"></label><div class="seg" id="segs" style="margin:0"></div></div>
+      <div class="field"><label data-t="shop.stores"></label><div class="wrapchips" id="stores"></div></div>
+      <div class="field"><label id="budgetLabel"></label><div class="grid2"><input class="inp" id="pmin" type="number" inputmode="numeric" min="0"><input class="inp" id="pmax" type="number" inputmode="numeric" min="0"></div><p class="hint" id="budgetConv" style="margin:0"></p></div>
+    </details>
+    <div class="between" style="margin:10px 0"><b id="resTitle"></b><span class="hint" style="margin:0" data-t="shop.note"></span></div>
+    <div class="grid" id="results"></div>
+  </div>
+  <div id="shCheck" hidden>
+    <p class="sub" data-t="check.lead"></p>
+    <div class="row" style="margin-bottom:12px"><label class="btn acc" for="checkFile"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><span data-t="check.upload"></span></label><input id="checkFile" type="file" accept="image/*" hidden></div>
+    <div id="checkOut"></div>
+  </div>
+</section>
+
+<!-- STYLIST -->
+<section id="v-stylist" hidden>
+  <div class="wrap-pad">
+    <h2 class="view-title" data-t="chat.title"></h2>
+    <p class="sub" data-t="chat.lead"></p>
+    <div class="chat" id="chat"></div>
+  </div>
+</section>
+
+<!-- SAVED (route only) -->
+<section id="v-saved" hidden>
+  <h2 class="view-title" data-t="saved.title"></h2>
+  <p class="sub" data-t="saved.lead"></p>
+  <div class="looks" id="savedLooks" style="margin-bottom:12px"></div>
+  <div class="grid" id="saved"></div>
+</section>
+</main>
+
+<div class="composer" id="composer" hidden><div class="in">
+  <div class="chips" id="chatChips"></div>
+  <form id="chatForm"><input id="chatIn" type="text" autocomplete="off" data-ph="chat.ph"><button class="btn acc" id="chatSend" type="submit" data-t="chat.send"></button></form>
+</div></div>
+
+<nav class="tabs"><div class="in">
+  <a href="#profile" data-v="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 3.8-5.5 7-5.5s5.8 1.9 7 5.5"/></svg><span data-t="tab.profile"></span></a>
+  <a href="#wardrobe" data-v="wardrobe"><svg viewBox="0 0 24 24"><path d="M12 6a2 2 0 1 1 2-2M12 6v2L3 15h18l-9-7"/><path d="M3 15v1h18v-1"/></svg><span data-t="tab.wardrobe"></span></a>
+  <a href="#style" data-v="style"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span data-t="tab.style"></span></a>
+  <a href="#shop" data-v="shop"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span data-t="tab.shop"></span></a>
+  <a href="#stylist" data-v="stylist"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></svg><span data-t="tab.stylist"></span></a>
+</div></nav>
+<div id="sheetRoot"></div>
+
+<script>
+/* ================= i18n ================= */
+const EN={
+"tab.profile":"Profile","tab.wardrobe":"Wardrobe","tab.style":"Style","tab.shop":"Shop","tab.stylist":"Stylist","close":"Close","del":"Delete","wait":"Working…",
+"prof.namePh":"Your name","prof.gallery":"Gallery","prof.camera":"Camera","prof.myType":"My colour type","prof.byPhoto":"Find out from a photo","prof.checkItem":"Check an item",
+"prof.wearHint":"Hover or tap for the full palette","prof.count":"{n} shades that suit you","prof.know":"I know my colour type","prof.choose":"— choose —",
+"prof.looks":"Appearance","prof.body":"Body shape","prof.kibbe":"Style type","prof.sys":"Typing system","sys.kibbe":"Kibbe","sys.larson":"Larson","shop.noStores":"No stores selected for this country and segment. Open “Stores & budget” and pick some.","prof.note":"Note about my appearance","prof.notePh":"E.g. naturally ash-brown hair, grey-blue eyes, sensitive skin",
+"prof.about":"About my colour type","prof.avoid":"Colours to avoid","prof.avoidHint":"And other warm, earthy, golden and neon shades.",
+"prof.makeup":"Makeup","prof.hair":"Hair colour","prof.soon":"Coming soon","prof.soonText":"Sephora products in shades that match your palette and skin type.",
+"prof.gender":"Gender","g.f":"Female","g.m":"Male","prof.settings":"Settings","prof.lang":"App language","prof.country":"Shop in","prof.currency":"Currency","prof.ip":"Detect by IP",
+"geo.ip":"By IP: {x}.","geo.manual":"Currency chosen manually.","geo.tz":"Set from your device time zone ({x}).",
+"lang.translating":"Translating the app…","lang.needAi":"This language is translated by Claude AI and needs the app open in Claude.","lang.ai":"Translated by AI.",
+"an.eyebrow":"AI analysis","an.title":"Find your colour type","an.how":"For an accurate result, take the photo like this:","an.r1":"No makeup, clean face","an.r2":"Hair pulled back into a ponytail","an.r3":"Neutral background: white or grey wall","an.r4":"White T-shirt, not right next to the face","an.r5":"Daylight by a window, no flash or filters","an.r6":"Face straight to the camera, eye colour visible",
+"an.uses":"Your body shape, style type and note will be taken into account.","an.pick":"Choose photo","an.go":"Analyse","an.wait":"Looking at undertone, eyes, hair and contrast… usually under a minute.","an.na":"Photo analysis needs the app open in Claude with access to Claude allowed.",
+"season.wait":"Preparing the colour type profile…","season.na":"AI isn't available here, so this colour type can't be loaded.",
+"ward.items":"My pieces","ward.diary":"Outfit diary","ward.lead":"Add what you already own. The app removes the background, checks the colour against your palette and builds outfits around it.",
+"ward.add":"Add a piece","ward.addHint":"Photo on a plain background","ward.photoTip":"Lay the piece flat or hang it on a plain, contrasting background. The more even the background, the cleaner the cut-out.",
+"ward.bg":"Remove background","ward.bgFail":"The background is too busy to remove. Try a plain wall or floor.","ward.type":"Type","ward.name":"Name (optional)","ward.save":"Save to wardrobe",
+"ward.near":"Closest palette shade: {c}","ward.avoidNear":"close to {c}, which is better avoided","ward.aiRate":"Ask AI about this piece",
+"lvl.ok":"Perfect for you","lvl.good":"Suits you","lvl.mid":"Borderline","lvl.bad":"Not your colour",
+"build.title":"Style it","build.look":"Whole outfit","build.one":"One piece","build.go":"Suggest","build.ai":"Suggest with AI","build.mine":"in your wardrobe",
+"slot.top":"Top","slot.bottom":"Bottom","slot.outer":"Outerwear","slot.shoes":"Shoes","slot.bag":"Bag","slot.acc":"Accessory",
+"diary.lead":"Take a selfie of today's outfit. AI can comment on how it works with your colouring.","diary.selfie":"Outfit selfie","diary.notePh":"Where you wore it","diary.rate":"Get AI feedback","diary.empty":"No outfits yet. Take today's selfie.",
+"style.looks":"Looks","style.week":"Week","style.trip":"Trip","style.insp":"Inspiration","style.count":"{n} looks","style.gen":"Create with AI","style.genWait":"Creating looks in your palette…",
+"occ.all":"All","occ.office":"Office","occ.date":"Date","occ.weekend":"Weekend","occ.evening":"Evening","occ.trip":"Travel",
+"look.mq":"Mannequin","look.board":"Pieces","look.total":"Approximate total","item.shop":"shop",
+"week.city":"City for the forecast","week.load":"Load forecast","week.loading":"Loading the forecast in the built-in browser…","week.loaded":"Forecast: {c}","week.noBrowser":"Live forecast works in the Claude desktop app. Set the temperature per day below.","week.noCity":"City not found.",
+"week.plan":"Plan my week","week.geo":"Use my location","week.here":"My location","week.now":"now","week.geoDenied":"Location access was denied. Enter a city instead.","week.ai":"Plan with AI","week.aiWait":"Planning 7 outfits…","temp.cold":"Cold","temp.cool":"Cool","temp.warm":"Warm",
+"trip.where":"Destination","trip.start":"From","trip.nights":"Nights","trip.purpose":"Trip type","trip.plan":"Plan the trip","trip.wait":"Checking the forecast and packing…","trip.pack":"Packing list","trip.looks":"Trip outfits","trip.noWx":"No forecast for these dates yet.",
+"purp.city":"City","purp.beach":"Beach","purp.business":"Business","purp.mountains":"Mountains","purp.event":"Event",
+"pk.clothes":"Clothes","pk.tops":"Tops","pk.bottoms":"Trousers or skirts","pk.dress":"Dress","pk.knit":"Knit jumper","pk.coat":"Warm coat","pk.trench":"Trench or light jacket","pk.light":"Light layer for evenings","pk.shoes":"Shoes","pk.sandals":"Sandals","pk.comfy":"Comfortable walking shoes","pk.smart":"Smart shoes","pk.second":"Second pair","pk.acc":"Accessories","pk.bag":"Day bag","pk.scarf":"Scarf","pk.sun":"Sun hat","pk.umbrella":"Umbrella","pk.sunglasses":"Sunglasses","pk.care":"Care & tech","pk.toiletries":"Toiletries","pk.makeup":"Makeup in your palette","pk.razor":"Razor","pk.charger":"Phone charger",
+"style.insp":"Inspiration","style.pin":"Pinterest board link","style.save":"Save","style.open":"Open board ↗","style.upload":"Upload screenshots","style.uploadHint":"Add 3–8 screenshots of pins or outfits you like. AI describes your style and uses it everywhere. Pinterest can't be read by link yet.",
+"style.portrait":"Your style portrait","style.analyzing":"Studying silhouettes, fabrics and mood…","style.or":"Or choose styles","style.like":"I like","style.avoid":"Don't suggest",
+"shop.catalog":"Catalogue","shop.check":"Check an item","shop.lead":"{season} palette · stores in {c}","shop.search":"Search: coat, skirt, blouse…","shop.allColors":"All colours","shop.filters":"Stores & budget",
+"shop.segment":"Segment","shop.stores":"Stores","shop.budget":"Budget per piece, {c}","shop.note":"Approximate prices","shop.empty":"Nothing found. Try another colour or category.","shop.found":"{n} pieces",
+"seg.budget":"Budget","seg.mid":"Mid","seg.lux":"Luxury",
+"item.where":"Search in stores · {c}","item.search":"search","item.approx":"Approximate price for this segment. A live catalogue is coming later.","item.whyColor":"{color} is in your {season} palette: cool, soft and flattering near the face.","item.save":"Save","item.unsave":"Remove from saved",
+"check.lead":"Upload a photo or a screenshot from a store. The app checks the colour against your palette and shows similar pieces in your shades.","check.upload":"Upload photo or screenshot","check.ai":"Ask AI for a verdict","check.similar":"Similar in your palette","check.better":"Better shade: {c}",
+"chat.title":"Your stylist","chat.lead":"Ask anything: what to wear, what to buy, whether a colour suits you. The stylist knows your palette, style and wardrobe.","chat.ph":"Ask your stylist…","chat.send":"Send",
+"chat.hello":"Hi{n}! I know your palette, your style and what's in your wardrobe. What are we dressing for?","chat.na":"The stylist works when the app is open in Claude.",
+"chat.q1":"What should I wear today?","chat.q2":"Does mustard suit me?","chat.q3":"Build me an autumn capsule","chat.q4":"What's missing in my wardrobe?",
+"saved.title":"Saved","saved.lead":"Pieces and looks you marked with a heart.","saved.empty":"Nothing here yet. Tap the heart on a piece or a look.",
+"cv.title":"Currency converter","cv.eyebrow":"National Bank of Belarus rate","cv.swap":"⇅ Swap","cv.refresh":"Update rate","cv.rate":"1 {a} = {r} {b} · NBRB rate on {d}","cv.updated":"Rate updated: NBRB on {d}.","cv.noBrowser":"Rate updates work in the Claude desktop app. Showing the NBRB rate on {d}.","cv.opening":"Opening api.nbrb.by in the built-in browser…","cv.fail":"Couldn't update the rate: ",
+"err.not_granted":"Allow the app to use Claude.","err.rate_limited":"Too many requests in a row. Try again in a minute.","err.invalid_json":"The AI answer came back in an unexpected format. Try again.","err.image_rejected":"This photo doesn't work: choose a smaller JPG or PNG.","err.refused":"The AI couldn't process this request. Try rephrasing.","err.default":"Couldn't reach the AI. Try again.","err.noBrowser":"This works in the Claude desktop app (built-in browser).","err.tools_unavailable":"This needs the Claude app.",
+"g.neutral":"Neutrals","g.blue":"Blues","g.pink":"Pinks & berries","g.purple":"Purples","g.green":"Greens",
+"cat.all":"All","cat.outerwear":"Outerwear","cat.knit":"Knitwear","cat.top":"Tops","cat.dress":"Dresses","cat.skirt":"Skirts","cat.trousers":"Trousers","cat.shoes":"Shoes","cat.bag":"Bags","cat.accessory":"Accessories"
+};
+const RU={
+"tab.profile":"Профиль","tab.wardrobe":"Гардероб","tab.style":"Стиль","tab.shop":"Подбор","tab.stylist":"Стилист","close":"Закрыть","del":"Удалить","wait":"Секунду…",
+"prof.namePh":"Твоё имя","prof.gallery":"Галерея","prof.camera":"Камера","prof.myType":"Мой цветотип","prof.byPhoto":"Определить по фото","prof.checkItem":"Проверить вещь",
+"prof.wearHint":"Наведи или нажми — откроется вся палитра","prof.count":"{n} оттенков, которые тебе идут","prof.know":"Я знаю свой цветотип","prof.choose":"— выбери —",
+"prof.looks":"Внешность","prof.body":"Тип фигуры","prof.kibbe":"Типаж","prof.sys":"Система типажей","sys.kibbe":"Кибби","sys.larson":"Ларсон","shop.noStores":"Для этой страны и сегмента не выбрано ни одного магазина. Открой «Магазины и бюджет» и отметь нужные.","prof.note":"Заметка о внешности","prof.notePh":"Например: натуральные пепельно-русые волосы, серо-голубые глаза, чувствительная кожа",
+"prof.about":"О цветотипе","prof.avoid":"Избегать","prof.avoidHint":"А также другие тёплые, землистые, золотистые и неоновые оттенки.",
+"prof.makeup":"Макияж","prof.hair":"Цвет волос","prof.soon":"Скоро","prof.soonText":"Средства Sephora в оттенках под твою палитру и тип кожи.",
+"prof.gender":"Пол","g.f":"Женский","g.m":"Мужской","prof.settings":"Настройки","prof.lang":"Язык приложения","prof.country":"Магазины страны","prof.currency":"Валюта","prof.ip":"Определить по IP",
+"geo.ip":"По IP: {x}.","geo.manual":"Валюта выбрана вручную.","geo.tz":"Определено по часовому поясу устройства ({x}).",
+"lang.translating":"Перевожу приложение…","lang.needAi":"Этот язык переводит ИИ Claude, нужно открыть приложение в Claude.","lang.ai":"Переведено ИИ.",
+"an.eyebrow":"ИИ-анализ","an.title":"Определим цветотип","an.how":"Для точного результата сделай снимок так:","an.r1":"Без макияжа, лицо чистое","an.r2":"Волосы собраны в хвост","an.r3":"Нейтральный фон: белая или серая стена","an.r4":"Белая футболка, но не у самого лица","an.r5":"Дневной свет у окна, без вспышки и фильтров","an.r6":"Лицо анфас, видно цвет глаз",
+"an.uses":"Тип фигуры, типаж и заметка тоже будут учтены.","an.pick":"Выбрать фото","an.go":"Анализировать","an.wait":"Смотрю на подтон, глаза, волосы и контраст… обычно до минуты.","an.na":"Анализ фото работает, когда приложение открыто в Claude и ему разрешено использовать Claude.",
+"season.wait":"Готовлю описание цветотипа…","season.na":"ИИ здесь недоступен, профиль этого цветотипа не загрузить.",
+"ward.items":"Мои вещи","ward.diary":"Дневник образов","ward.lead":"Добавь то, что уже есть. Приложение уберёт фон, проверит цвет по твоей палитре и соберёт образы вокруг вещи.",
+"ward.add":"Добавить вещь","ward.addHint":"Фото на однотонном фоне","ward.photoTip":"Разложи вещь или повесь на однотонном контрастном фоне. Чем ровнее фон, тем чище вырезка.",
+"ward.bg":"Убрать фон","ward.bgFail":"Фон слишком пёстрый, убрать не получилось. Попробуй однотонную стену или пол.","ward.type":"Что это","ward.name":"Название (необязательно)","ward.save":"Сохранить в гардероб",
+"ward.near":"Ближайший оттенок палитры: {c}","ward.avoidNear":"близко к «{c}», его лучше избегать","ward.aiRate":"Спросить ИИ про вещь",
+"lvl.ok":"Идеально тебе","lvl.good":"Тебе идёт","lvl.mid":"Спорно","lvl.bad":"Не твой цвет",
+"build.title":"Подобрать к вещи","build.look":"Весь образ","build.one":"Одну вещь","build.go":"Подобрать","build.ai":"Подобрать с ИИ","build.mine":"в гардеробе",
+"slot.top":"Верх","slot.bottom":"Низ","slot.outer":"Верхняя одежда","slot.shoes":"Обувь","slot.bag":"Сумка","slot.acc":"Аксессуар",
+"diary.lead":"Сделай селфи образа дня. ИИ подскажет, как он работает с твоей внешностью.","diary.selfie":"Селфи образа","diary.notePh":"Куда надевала","diary.rate":"Отзыв ИИ","diary.empty":"Пока нет образов. Сделай селфи сегодняшнего.",
+"style.looks":"Образы","style.week":"Неделя","style.trip":"Поездка","style.insp":"Вдохновение","style.count":"{n} образов","style.gen":"Собрать с ИИ","style.genWait":"Собираю образы в твоей палитре…",
+"occ.all":"Все","occ.office":"Офис","occ.date":"Свидание","occ.weekend":"Выходные","occ.evening":"Вечер","occ.trip":"Поездка",
+"look.mq":"Манекен","look.board":"Вещи","look.total":"Примерно за всё","item.shop":"в магазин",
+"week.city":"Город для прогноза","week.load":"Загрузить прогноз","week.loading":"Загружаю прогноз во встроенном браузере…","week.loaded":"Прогноз: {c}","week.noBrowser":"Живой прогноз работает в десктоп-приложении Claude. Ниже можно выбрать погоду на каждый день.","week.noCity":"Город не найден.",
+"week.plan":"Спланировать неделю","week.geo":"По моему местоположению","week.here":"Моё местоположение","week.now":"сейчас","week.geoDenied":"Доступ к местоположению запрещён. Введи город.","week.ai":"Спланировать с ИИ","week.aiWait":"Планирую 7 образов…","temp.cold":"Холодно","temp.cool":"Прохладно","temp.warm":"Тепло",
+"trip.where":"Куда","trip.start":"С какого числа","trip.nights":"Ночей","trip.purpose":"Тип поездки","trip.plan":"Спланировать поездку","trip.wait":"Смотрю прогноз и собираю чемодан…","trip.pack":"Что взять","trip.looks":"Образы в поездку","trip.noWx":"Прогноза на эти даты пока нет.",
+"purp.city":"Город","purp.beach":"Пляж","purp.business":"Командировка","purp.mountains":"Горы","purp.event":"Событие",
+"pk.clothes":"Одежда","pk.tops":"Топы и блузы","pk.bottoms":"Брюки или юбки","pk.dress":"Платье","pk.knit":"Тёплый джемпер","pk.coat":"Тёплое пальто","pk.trench":"Тренч или лёгкая куртка","pk.light":"Лёгкий слой на вечер","pk.shoes":"Обувь","pk.sandals":"Сандалии","pk.comfy":"Удобная обувь для прогулок","pk.smart":"Нарядная обувь","pk.second":"Вторая пара","pk.acc":"Аксессуары","pk.bag":"Сумка на день","pk.scarf":"Шарф","pk.sun":"Шляпа от солнца","pk.umbrella":"Зонт","pk.sunglasses":"Солнцезащитные очки","pk.care":"Уход и техника","pk.toiletries":"Косметичка","pk.makeup":"Макияж в твоей палитре","pk.razor":"Бритва","pk.charger":"Зарядка",
+"style.pin":"Ссылка на доску Pinterest","style.save":"Сохранить","style.open":"Открыть доску ↗","style.upload":"Загрузить скриншоты","style.uploadHint":"Добавь 3–8 скриншотов пинов или образов, которые нравятся. ИИ опишет твой стиль и будет учитывать его везде. По ссылке Pinterest пока не читается.",
+"style.portrait":"Портрет твоего стиля","style.analyzing":"Изучаю силуэты, фактуры и настроение…","style.or":"Или выбери стили","style.like":"Мне близко","style.avoid":"Не предлагать",
+"shop.catalog":"Каталог","shop.check":"Проверить вещь","shop.lead":"Палитра {season} · магазины: {c}","shop.search":"Поиск: пальто, юбка, блуза…","shop.allColors":"Все цвета","shop.filters":"Магазины и бюджет",
+"shop.segment":"Сегмент","shop.stores":"Магазины","shop.budget":"Бюджет за вещь, {c}","shop.note":"Цены ориентировочные","shop.empty":"Ничего не нашлось. Попробуй другой цвет или категорию.","shop.found":"{n} вещей",
+"seg.budget":"Бюджет","seg.mid":"Средний","seg.lux":"Люкс",
+"item.where":"Искать в магазинах · {c}","item.search":"поиск","item.approx":"Ориентировочная цена для сегмента. Настоящий каталог подключим позже.","item.whyColor":"{color} — из твоей палитры {season}: прохладный, мягкий и освежает лицо.","item.save":"В избранное","item.unsave":"Убрать из избранного",
+"check.lead":"Загрузи фото или скриншот из магазина. Приложение сверит цвет с палитрой и покажет похожие вещи в твоих оттенках.","check.upload":"Загрузить фото или скриншот","check.ai":"Вердикт от ИИ","check.similar":"Похожее в твоей палитре","check.better":"Лучше оттенок: {c}",
+"chat.title":"Твой стилист","chat.lead":"Спрашивай что угодно: что надеть, что купить, идёт ли цвет. Стилист знает твою палитру, стиль и гардероб.","chat.ph":"Спроси стилиста…","chat.send":"Отправить",
+"chat.hello":"Привет{n}! Я знаю твою палитру, стиль и что есть в гардеробе. Куда собираемся?","chat.na":"Стилист работает, когда приложение открыто в Claude.",
+"chat.q1":"Что надеть сегодня?","chat.q2":"Пойдёт ли мне горчичный?","chat.q3":"Собери капсулу на осень","chat.q4":"Чего не хватает в гардеробе?",
+"saved.title":"Избранное","saved.lead":"Вещи и образы, отмеченные сердечком.","saved.empty":"Пока пусто. Нажми на сердечко у вещи или образа.",
+"cv.title":"Конвертер валют","cv.eyebrow":"Курс НБ РБ","cv.swap":"⇅ Поменять","cv.refresh":"Обновить курс","cv.rate":"1 {a} = {r} {b} · курс НБ РБ на {d}","cv.updated":"Курс обновлён: НБ РБ на {d}.","cv.noBrowser":"Обновление курса работает в десктоп-приложении Claude. Сейчас курс НБ РБ на {d}.","cv.opening":"Открываю api.nbrb.by во встроенном браузере…","cv.fail":"Не удалось обновить курс: ",
+"err.not_granted":"Нужно разрешить приложению использовать Claude.","err.rate_limited":"Слишком много запросов подряд. Попробуй через минуту.","err.invalid_json":"Ответ ИИ пришёл в неожиданном виде. Попробуй ещё раз.","err.image_rejected":"Это фото не подходит: выбери JPG или PNG поменьше.","err.refused":"ИИ не смог обработать запрос. Попробуй переформулировать.","err.default":"Не получилось связаться с ИИ. Попробуй ещё раз.","err.noBrowser":"Работает в десктоп-приложении Claude (встроенный браузер).","err.tools_unavailable":"Нужно приложение Claude.",
+"g.neutral":"Нейтральные","g.blue":"Синие и голубые","g.pink":"Розовые и ягодные","g.purple":"Лиловые","g.green":"Зелёные",
+"cat.all":"Всё","cat.outerwear":"Верхняя одежда","cat.knit":"Трикотаж","cat.top":"Блузы и топы","cat.dress":"Платья","cat.skirt":"Юбки","cat.trousers":"Брюки","cat.shoes":"Обувь","cat.bag":"Сумки","cat.accessory":"Аксессуары"
+};
+/* ================= data ================= */
+// Cool Summer palette: [key, hex, group, en, ru]
+const CS_PAL=[
+["softWhite","#F1F0EC","neutral","Soft white","Мягкий белый"],["pearl","#E3E1E6","neutral","Cool pearl","Холодный жемчуг"],["dove","#A6A9B0","neutral","Dove grey","Голубиный серый"],["pewter","#858995","neutral","Pewter","Оловянный"],["charcoal","#4E5462","neutral","Blue charcoal","Сине-графитовый"],["navy","#3E4E6E","neutral","Soft navy","Мягкий нейви"],["taupe","#9A8E93","neutral","Rose taupe","Розовый тауп"],["cocoa","#7D6368","neutral","Cocoa rose","Какао-роза"],
+["powder","#A9C2DA","blue","Powder blue","Пудровый голубой"],["sky","#8FB3D9","blue","Summer sky","Летнее небо"],["slate","#6E86A6","blue","Slate blue","Дымчато-синий"],["denim","#5B7DA6","blue","Soft denim","Мягкий деним"],["periwinkle","#8E99CF","blue","Periwinkle","Барвинок"],["cornflower","#6E83C6","blue","Cornflower","Васильковый"],
+["palePink","#EBCAD1","pink","Pale pink","Бледно-розовый"],["dustyRose","#D3A4B0","pink","Dusty rose","Пыльная роза"],["rosePink","#C67B93","pink","Rose pink","Розовый"],["watermelon","#D46E86","pink","Soft watermelon","Мягкий арбузный"],["raspberry","#A84870","pink","Raspberry","Малина"],["berry","#8A3A62","pink","Berry","Ягодный"],["cherry","#A3344F","pink","Cool cherry","Холодная вишня"],
+["lilac","#C9B4D7","purple","Lilac","Сирень"],["lavender","#B6A7CF","purple","Lavender","Лаванда"],["mauve","#B07A93","purple","Mauve","Мальва"],["orchid","#A677A8","purple","Orchid","Орхидея"],["plum","#6E4466","purple","Plum","Слива"],["grape","#5E4A7B","purple","Soft grape","Виноградный"],
+["mint","#A9D3C7","green","Cool mint","Холодная мята"],["seaGreen","#78AEA1","green","Sea green","Морская волна"],["sage","#8EA5A0","green","Blue sage","Голубой шалфей"],["spruce","#4F7E86","green","Spruce","Ель"],["pine","#3E655F","green","Pine","Хвоя"]
+];
+const CS_AVOID=[["#E8762C","Orange","Оранжевый"],["#D2A019","Mustard","Горчичный"],["#C1955E","Camel","Кэмел"],["#7B7A2F","Olive","Оливковый"],["#B5481A","Rust","Ржавый"],["#111111","Jet black","Угольно-чёрный"]];
+const CS_TEXT={
+ en:{desc:"Cool undertone with a pink-blue cast, soft medium contrast and muted colours. Cool, dusty shades of medium depth suit you best: they make the skin look even and fresh. Warm, earthy and very bright colours clash with the undertone and emphasise shadows under the eyes.",
+  makeup:{"Lips":"Dusty rose, mauve, berry and raspberry shades; cool pink nude","Blush":"Cool pink, rose, soft berry — no peach or coral","Eyes":"Taupe, grey, plum, lavender; graphite or navy liner instead of black","Brows":"Ash, grey-brown, no red tint","Base":"Neutral or cool undertone, no golden cast"},
+  hair:{"Best":"Your natural shade, ash light brown, cool light brown, ash blonde","Avoid":"Golden, copper, red, blue-black, warm caramel"}},
+ ru:{nameLocal:"Холодное лето",desc:"Холодный подтон с розово-голубым оттенком, мягкий средний контраст и приглушённые цвета. Лучше всего работают прохладные пыльные оттенки средней светлоты: в них кожа выглядит ровной и свежей. Тёплые, землистые и слишком яркие цвета спорят с подтоном и подчёркивают тени под глазами.",
+  makeup:{"Губы":"Пыльная роза, мальва, ягодные и малиновые оттенки; холодный розовый нюд","Румяна":"Холодный розовый, роза, светлая ягода — без персика и коралла","Глаза":"Тауповый, серый, сливовый, лавандовый; подводка графит или нейви вместо чёрной","Брови":"Пепельные, серо-коричневые, без рыжины","Тон":"Нейтральный или холодный подтон, без золотистости"},
+  hair:{"Лучше всего":"Натуральный оттенок, пепельный русый, холодный светло-коричневый, пепельный блонд","Избегать":"Золотистый, медный, рыжий, иссиня-чёрный, тёплая карамель"}}
+};
+const SEASONS=["Light Spring","Warm Spring","Bright Spring","Light Summer","Cool Summer","Soft Summer","Soft Autumn","Warm Autumn","Deep Autumn","Deep Winter","Cool Winter","Bright Winter"];
+const BODY=[["hourglass","Hourglass","Песочные часы"],["pear","Pear","Груша"],["apple","Apple","Яблоко"],["rectangle","Rectangle","Прямоугольник"],["invtri","Inverted triangle","Перевёрнутый треугольник"]];
+const LARSON=[["D","Dramatic","Драматик"],["N","Natural","Натурал"],["R","Romantic","Романтик"],["G","Gamine","Гамин"],["DN","Dramatic Natural","Драматик-натурал"],["ND","Natural Dramatic","Натурал-драматик"],["DC","Dramatic Classic","Драматик-классик"],["CD","Classic Dramatic","Классик-драматик"],["RD","Romantic Dramatic","Романтик-драматик"],["RG","Romantic Gamine","Романтик-гамин"],["GR","Gamine Romantic","Гамин-романтик"],["CR","Classic Romantic","Классик-романтик"],["NR","Natural Romantic","Натурал-романтик"]];
+const KIBBE=[["D","Dramatic","Драматик"],["SD","Soft Dramatic","Софт-драматик"],["FN","Flamboyant Natural","Яркий натурал"],["SN","Soft Natural","Софт-натурал"],["DC","Dramatic Classic","Драматик-классик"],["C","Classic","Классик"],["SC","Soft Classic","Софт-классик"],["FG","Flamboyant Gamine","Яркий гамин"],["SG","Soft Gamine","Софт-гамин"],["R","Romantic","Романтик"],["TR","Theatrical Romantic","Театральный романтик"]];
+
+// key, category, slot, en, ru, PLN price ranges [budget, mid, lux], preferred colours
+const TYPES=[
+["coat","outerwear","outer","Wool coat","Шерстяное пальто",[[299,599],[899,1999],[9500,24000]],["navy","slate","dove","cocoa","mauve","charcoal"]],
+["trench","outerwear","outer","Trench coat","Тренч",[[249,499],[799,1699],[8000,19000]],["dove","pearl","slate"]],
+["blazer","outerwear","outer","Tailored blazer","Приталенный жакет",[[199,399],[599,1299],[6500,15000]],["navy","dustyRose","lavender","charcoal"]],
+["knit","knit","top","Fine-knit jumper","Джемпер тонкой вязки",[[99,199],[299,699],[3500,9000]],["lavender","powder","dustyRose","sage","pewter","raspberry"]],
+["turtleneck","knit","top","Turtleneck","Водолазка",[[79,159],[249,499],[2800,7000]],["softWhite","plum","navy","spruce","lilac"]],
+["blouse","top","top","Satin blouse","Сатиновая блуза",[[119,229],[349,799],[4000,11000]],["pearl","palePink","periwinkle","orchid","sky"]],
+["tee","top","top","Cotton T-shirt","Хлопковая футболка",[[39,89],[129,249],[1500,4000]],["softWhite","dove","mint","palePink"]],
+["dress","dress","dress","Midi dress","Платье миди",[[159,349],[499,1299],[7000,20000]],["raspberry","berry","slate","plum","seaGreen","cornflower"]],
+["skirt","skirt","bottom","Pleated midi skirt","Плиссированная юбка миди",[[119,249],[349,799],[4500,12000]],["mauve","navy","lilac","pewter"]],
+["trousers","trousers","bottom","Wide-leg trousers","Широкие брюки",[[129,259],[349,799],[3500,9000]],["dove","charcoal","navy","cocoa","taupe"]],
+["jeans","trousers","bottom","Straight jeans","Прямые джинсы",[[129,229],[349,599],[3000,7000]],["denim","softWhite"]],
+["pumps","shoes","shoes","Pointed pumps","Туфли-лодочки",[[149,299],[399,899],[3500,6500]],["dustyRose","navy","taupe","cherry"]],
+["boots","shoes","shoes","Leather boots","Кожаные сапоги",[[249,499],[699,1499],[5500,12000]],["charcoal","cocoa","plum"]],
+["bag","bag","bag","Structured bag","Структурная сумка",[[129,299],[399,1199],[9000,30000]],["cocoa","berry","navy","taupe","lavender"]],
+["scarf","accessory","acc","Wool scarf","Шерстяной шарф",[[59,129],[199,399],[1800,4500]],["periwinkle","rosePink","spruce","grape"]]
+];
+const T_BY=Object.fromEntries(TYPES.map(x=>[x[0],x]));
+const CATS=["all","outerwear","knit","top","dress","skirt","trousers","shoes","bag","accessory"];
+const SLOTS=["top","bottom","dress","outer","shoes","bag","acc"];
+const SEGS=["budget","mid","lux"];
+const PL_Q={coat:"płaszcz wełniany",trench:"trencz",blazer:"marynarka damska",knit:"sweter cienki",turtleneck:"golf",blouse:"bluzka satynowa",tee:"t-shirt bawełniany",dress:"sukienka midi",skirt:"spódnica plisowana midi",trousers:"spodnie szerokie",jeans:"jeansy proste",pumps:"czółenka",boots:"kozaki skórzane",bag:"torebka",scarf:"szalik wełniany"};
+const PL_C={softWhite:"ecru",pearl:"perłowy",dove:"szary",pewter:"szary",charcoal:"grafitowy",navy:"granatowy",taupe:"taupe",cocoa:"brązowy",powder:"błękitny",sky:"niebieski",slate:"niebieski",denim:"niebieski",periwinkle:"lawendowy",cornflower:"chabrowy",palePink:"jasnoróżowy",dustyRose:"pudrowy róż",rosePink:"różowy",watermelon:"różowy",raspberry:"malinowy",berry:"bordowy",cherry:"wiśniowy",lilac:"liliowy",lavender:"lawendowy",mauve:"wrzosowy",orchid:"fioletowy",plum:"śliwkowy",grape:"fioletowy",mint:"miętowy",seaGreen:"morski",sage:"szałwiowy",spruce:"butelkowa zieleń",pine:"ciemnozielony"};
+const EN_C={softWhite:"ecru",pearl:"pearl grey",dove:"grey",pewter:"grey",charcoal:"charcoal",navy:"navy",taupe:"taupe",cocoa:"mauve brown",powder:"light blue",sky:"sky blue",slate:"blue grey",denim:"mid blue",periwinkle:"periwinkle",cornflower:"blue",palePink:"light pink",dustyRose:"dusty pink",rosePink:"pink",watermelon:"pink",raspberry:"raspberry",berry:"burgundy",cherry:"cherry red",lilac:"lilac",lavender:"lavender",mauve:"mauve",orchid:"purple",plum:"plum",grape:"purple",mint:"mint",seaGreen:"sea green",sage:"sage",spruce:"teal",pine:"dark green"};
+
+// country: code, en, ru, currency, lang, Zara path, H&M path
+const COUNTRIES=[
+["PL","Poland","Польша","PLN","pl","pl/pl","pl_pl"],["PT","Portugal","Португалия","EUR","pt","pt/pt","pt_pt"],["ES","Spain","Испания","EUR","es","es/es","es_es"],
+["DE","Germany","Германия","EUR","de","de/de","de_de"],["FR","France","Франция","EUR","fr","fr/fr","fr_fr"],["IT","Italy","Италия","EUR","it","it/it","it_it"],
+["NL","Netherlands","Нидерланды","EUR","nl","nl/nl","nl_nl"],["BE","Belgium","Бельгия","EUR","fr","be/fr","fr_be"],["AT","Austria","Австрия","EUR","de","at/de","de_at"],
+["IE","Ireland","Ирландия","EUR","en","ie/en","en_ie"],["GB","United Kingdom","Великобритания","GBP","en","uk/en","en_gb"],["CH","Switzerland","Швейцария","CHF","de","ch/de","de_ch"],
+["LT","Lithuania","Литва","EUR","lt","lt/en",""],["LV","Latvia","Латвия","EUR","lv","lv/en",""],["EE","Estonia","Эстония","EUR","et","ee/en","et_ee"],
+["CZ","Czechia","Чехия","CZK","cs","cz/en","cs_cz"],["SE","Sweden","Швеция","SEK","sv","se/en","sv_se"],["DK","Denmark","Дания","DKK","da","dk/en","da_dk"],
+["BY","Belarus","Беларусь","BYN","ru","",""],["NO","Norway","Норвегия","NOK","no","no/en","no_no"],["FI","Finland","Финляндия","EUR","fi","fi/en","fi_fi"],["GR","Greece","Греция","EUR","el","gr/en",""]
+];
+const C_BY=Object.fromEntries(COUNTRIES.map(c=>[c[0],c]));
+const TZ_COUNTRY=[[/Minsk/,"BY"],[/Warsaw/,"PL"],[/Lisbon|Madeira|Azores/,"PT"],[/Madrid|Canary/,"ES"],[/Berlin|Busingen/,"DE"],[/Paris/,"FR"],[/Rome/,"IT"],[/Amsterdam/,"NL"],[/Brussels/,"BE"],[/Vienna/,"AT"],[/Dublin/,"IE"],[/London/,"GB"],[/Zurich/,"CH"],[/Vilnius/,"LT"],[/Riga/,"LV"],[/Tallinn/,"EE"],[/Prague/,"CZ"],[/Stockholm/,"SE"],[/Copenhagen/,"DK"],[/Oslo/,"NO"],[/Helsinki/,"FI"],[/Athens/,"GR"]];
+
+// stores: domain used for site search; z = Zara-style direct path; only = countries where the brand sells online
+const STORES=[
+ {id:"zara",n:"Zara",seg:"budget",d:"zara.com",zara:true},
+ {id:"hm",n:"H&M",seg:"budget",d:"hm.com",hm:true},
+ {id:"mango",n:"Mango",seg:"budget",d:"shop.mango.com"},
+ {id:"reserved",n:"Reserved",seg:"budget",d:"reserved.com",only:["PL","CZ","LT","LV","EE","DE"],pl:q=>`https://www.reserved.com/pl/pl/search/?query=${q}`},
+ {id:"bershka",n:"Bershka",seg:"budget",d:"bershka.com",pl:q=>`https://www.bershka.com/pl/q/${q}`},
+ {id:"stradivarius",n:"Stradivarius",seg:"budget",d:"stradivarius.com"},
+ {id:"pullbear",n:"Pull&Bear",seg:"budget",d:"pullandbear.com",pl:q=>`https://www.pullandbear.com/pl/q/${q}`},
+ {id:"massimo",n:"Massimo Dutti",seg:"mid",d:"massimodutti.com"},
+ {id:"cos",n:"COS",seg:"mid",d:"cos.com"},
+ {id:"arket",n:"Arket",seg:"mid",d:"arket.com"},
+ {id:"stories",n:"& Other Stories",seg:"mid",d:"stories.com"},
+ {id:"sandro",n:"Sandro",seg:"mid",d:"sandro-paris.com"},
+ {id:"maje",n:"Maje",seg:"mid",d:"maje.com"},
+ {id:"vitkac",n:"Vitkac",seg:"lux",d:"vitkac.com"},
+ {id:"maxmara",n:"Max Mara",seg:"lux",d:"maxmara.com"},
+ {id:"miumiu",n:"Miu Miu",seg:"lux",d:"miumiu.com"},
+ {id:"celine",n:"Celine",seg:"lux",d:"celine.com"},
+ {id:"dior",n:"Dior",seg:"lux",d:"dior.com"},
+ {id:"chanel",n:"Chanel",seg:"lux",d:"chanel.com"},
+ {id:"loverepublic",n:"Love Republic",seg:"budget",d:"loverepublic.by",only:["BY"]},
+ {id:"zarina",n:"Zarina",seg:"budget",d:"zarina.by",only:["BY"]},
+ {id:"befree",n:"Befree",seg:"budget",d:"befree.by",only:["BY"]},
+ {id:"sela",n:"Sela",seg:"budget",d:"sela.by",only:["BY"]},
+ {id:"markformelle",n:"Mark Formelle",seg:"budget",d:"markformelle.by",only:["BY"]},
+ {id:"lamoda",n:"Lamoda",seg:"budget",d:"lamoda.by",only:["BY"]},
+ {id:"wb",n:"Wildberries",seg:"budget",d:"wildberries.by",only:["BY"]},
+ {id:"paula",n:"Paula",seg:"mid",d:"paula.by",only:["BY"]},
+ {id:"znwr",n:"ZNWR",seg:"mid",d:"znwr.ru",only:["BY"]},
+ {id:"kazaki",n:"Kazáki",seg:"mid",d:"kazakistore.by",only:["BY"]},
+ {id:"mua",n:"MUA",seg:"mid",d:"muashop.by",only:["BY"]}
+];
+
+const STYLE_TAGS=[["dc","Dramatic classic","Драматик-классик"],["min","Minimalism","Минимализм"],["ql","Quiet luxury","Тихая роскошь"],["fr","French chic","Французский шик"],["rom","Romantic","Романтичный"],["sc","Scandinavian","Скандинавский"],["biz","Business","Деловой"],["cas","Casual","Кэжуал"],["eve","Evening","Вечерний"],["boho","Boho","Бохо"],["grunge","Grunge","Гранж"],["sport","Sport chic","Спорт-шик"]];
+const AVOID_TAGS=[["sporty","Sporty style","Спортивный стиль"],["over","Oversized","Оверсайз"],["prints","Loud prints","Яркие принты"],["ruffles","Ruffles","Рюши и воланы"],["mini","Mini length","Мини"],["logo","Logomania","Логомания"]];
+const OCC=["office","date","weekend","evening","trip"];
+// looks: id, en, ru, occasions, temps, style tags, items [type, colour]
+const LOOKS=[
+["navyTonal","Navy monochrome","Монохром в нейви",["office"],["cold","cool"],["dc","biz","min"],[["coat","navy"],["turtleneck","softWhite"],["trousers","navy"],["bag","cocoa"]]],
+["softPower","Soft power","Мягкая сила",["office"],["cool","warm"],["biz","fr"],[["blazer","dustyRose"],["tee","softWhite"],["trousers","dove"],["pumps","dustyRose"]]],
+["berryEvening","Berry evening","Ягодный вечер",["evening","date"],["cold","cool"],["eve","dc"],[["dress","berry"],["coat","charcoal"],["pumps","cherry"],["bag","navy"]]],
+["quietLux","Quiet luxury","Тихая роскошь",["office","weekend"],["cold","cool"],["ql","min"],[["coat","dove"],["turtleneck","pearl"],["trousers","taupe"],["boots","cocoa"]]],
+["lavenderLayers","Lavender layers","Слои лаванды",["weekend","date"],["cool"],["rom","min"],[["knit","lavender"],["skirt","pewter"],["boots","plum"],["bag","lavender"]]],
+["weekendDenim","Weekend denim","Деним на выходные",["weekend","trip"],["cool"],["cas","sc"],[["jeans","denim"],["knit","powder"],["trench","pearl"],["scarf","periwinkle"]]],
+["sprucePlum","Spruce & plum","Ель и слива",["weekend","office"],["cold"],["dc","rom"],[["turtleneck","spruce"],["skirt","mauve"],["boots","plum"],["scarf","grape"]]],
+["slateCity","Slate city","Город в дымке",["office","trip"],["cool"],["biz","min","sc"],[["trench","slate"],["blouse","sky"],["trousers","charcoal"],["pumps","navy"]]],
+["raspberryAccent","Raspberry accent","Малиновый акцент",["date","evening"],["cool","warm"],["dc","fr","eve"],[["blazer","navy"],["blouse","palePink"],["skirt","navy"],["bag","berry"]]],
+["mintFresh","Fresh mint","Свежая мята",["weekend","trip"],["warm"],["cas","rom"],[["tee","mint"],["jeans","softWhite"],["blazer","lavender"],["bag","taupe"]]],
+["skyDate","Summer sky","Летнее небо",["date","office"],["warm"],["rom","fr"],[["blouse","sky"],["skirt","lilac"],["pumps","taupe"],["bag","lavender"]]],
+["seaDress","Sea breeze","Морской бриз",["trip","weekend","date"],["warm"],["cas","rom"],[["dress","seaGreen"],["pumps","dustyRose"],["bag","taupe"],["scarf","periwinkle"]]],
+["winterBerry","Winter berry","Зимняя ягода",["weekend","trip"],["cold"],["cas","sc"],[["coat","cocoa"],["knit","raspberry"],["jeans","denim"],["boots","charcoal"]]],
+["graphiteOffice","Graphite office","Графитовый офис",["office"],["cold","cool"],["biz","dc"],[["blazer","charcoal"],["blouse","pearl"],["trousers","charcoal"],["boots","charcoal"]]]
+];
+
+/* NBRB official rates, BYN per 1 unit, 28.10.2026 */
+const NBRB_SEED={date:"2026-10-28",byn:{BYN:1,PLN:0.7448,EUR:3.2811,USD:2.9456,GBP:3.9222,CHF:3.5556,CZK:0.134782,SEK:0.2957,DKK:0.43903,NOK:0.31632,RUB:0.036597,UAH:0.064378,KZT:0.006461,TRY:0.05916,CAD:2.1012,AUD:2.0696,JPY:0.018674,CNY:0.44178}};
+const CUR_SYM={PLN:"zł",EUR:"€",GBP:"£",CHF:"CHF",CZK:"Kč",SEK:"kr",DKK:"kr",NOK:"kr",BYN:"BYN",USD:"$"};
+const LANGS=[["en","English"],["ru","Русский"],["pl","Polski"],["de","Deutsch"],["fr","Français"],["es","Español"],["pt","Português"],["it","Italiano"],["nl","Nederlands"],["uk","Українська"],["be","Беларуская"],["lt","Lietuvių"],["cs","Čeština"],["sv","Svenska"]];
+/* ================= state ================= */
+const LS="undertone.v4";
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}}
+function persist(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function detectLocale(){
+  let tz="";try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(e){}
+  const nl=(navigator.language||"en").toLowerCase();
+  let home=(TZ_COUNTRY.find(([r])=>r.test(tz))||[])[1]||"";
+  if(!home){const cc=(nl.split("-")[1]||"").toUpperCase();if(cc==="BY"||C_BY[cc])home=cc}
+  if(home==="BY"||nl.startsWith("be")||nl==="ru-by") return {lang:"ru",home:"BY",shop:"PL",cur:"BYN",tz};
+  const c=C_BY[home];return {lang:"en",home,shop:c?home:"PL",cur:c?c[3]:"EUR",tz};
+}
+const LOC=detectLocale();
+const old=lsGet("undertone.v3");
+const S=Object.assign({
+  lang:LOC.lang, tr:{}, name:"", avatar:"",
+  season:"Cool Summer", seasonAI:null, gender:"f", body:"", kibbe:"", note:"",
+  styleTags:[], avoidTags:[], styleSummary:null, pinterest:"", aiLooks:null, occ:"all",
+  shopCountry:LOC.shop, currency:LOC.cur, geo:{src:"tz",label:LOC.tz}, rates:NBRB_SEED,
+  cat:"all", color:"", segs:["budget","mid"], stores:["zara","hm","mango","reserved","massimo","cos","arket"], pmin:null, pmax:null,
+  typeSys:"kibbe", larson:"", wardrobe:[], diary:[], week:{city:"",days:[],occ:{},plan:{}}, trip:{city:"",start:"",nights:4,purpose:"city",result:null},
+  chat:[], favs:[], favLooks:[], wSeg:"items", sSeg:"looks", shSeg:"cat"
+}, old?{lang:"ru",name:old.name||"",avatar:old.avatar||"",gender:old.gender||"f",styleTags:old.styleTags||[],avoidTags:old.avoidTags||[],styleSummary:old.styleSummary||null,pinterest:old.pinterest||"",kibbe:"DC",favLooks:old.favLooks||[]}:{}, lsGet(LS)||{});
+if(!S.rates?.byn?.EUR) S.rates=NBRB_SEED;
+if(S.kibbe==="DC"&&!S.larson&&!S._ty){S.typeSys="larson";S.larson="DC";S.kibbe="";S._ty=1}
+if(!S.rates.byn[S.currency]) S.currency="EUR";
+const shopCur=()=>(C_BY[S.shopCountry]||C_BY.PL)[3];
+if(S.pmax==null){S.pmin=0;S.pmax=niceRound(convert(2000,"PLN",shopCur()))}
+
+let sample=null,imgLimits=null,mcp=null;
+const STANDALONE=!window.claude;
+if(STANDALONE)mcp={direct:true};
+(async()=>{await null;if(STANDALONE){renderAll();autoWeather();return}
+  try{sample=await window.claude?.use?.("sample");if(sample)imgLimits=(await sample.limits().catch(()=>null))?.images||null}catch(e){sample=null}
+  try{mcp=await window.claude?.use?.("mcp")}catch(e){mcp=null}
+  renderAll();
+})();
+
+/* ================= images store (IndexedDB) ================= */
+const IDB={db:null,mem:new Map(),
+  async open(){if(this.db!==null)return this.db;try{this.db=await new Promise((res,rej)=>{const r=indexedDB.open("undertone",1);r.onupgradeneeded=()=>r.result.createObjectStore("img");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}catch(e){this.db=false}return this.db},
+  async set(k,v){this.mem.set(k,v);const db=await this.open();if(!db)return;try{await new Promise((res,rej)=>{const tx=db.transaction("img","readwrite");tx.objectStore("img").put(v,k);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}catch(e){}},
+  async get(k){if(this.mem.has(k))return this.mem.get(k);const db=await this.open();if(!db)return null;try{const v=await new Promise((res,rej)=>{const r=db.transaction("img").objectStore("img").get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});if(v)this.mem.set(k,v);return v||null}catch(e){return null}},
+  async del(k){this.mem.delete(k);const db=await this.open();if(!db)return;try{db.transaction("img","readwrite").objectStore("img").delete(k)}catch(e){}}
+};
+async function hydrateImgs(root){for(const el of (root||document).querySelectorAll("img[data-img]")){if(el.dataset.done)continue;const v=await IDB.get(el.dataset.img);if(v){el.src=v;el.dataset.done="1"}}}
+
+/* ================= helpers ================= */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function t(k,vars){let s=(S.lang==="ru"?RU:S.lang==="en"?EN:(S.tr[S.lang]||{}))[k]??EN[k]??k;if(vars)for(const v in vars)s=s.split("{"+v+"}").join(vars[v]);return s}
+function dl(en,ru,key){if(S.lang==="ru")return ru;if(S.lang==="en")return en;return S.tr[S.lang]?.[key]??en}
+const langName=()=>(LANGS.find(x=>x[0]===S.lang)||LANGS[0])[1];
+const hexOk=h=>/^#[0-9a-f]{6}$/i.test(h||"")?h:"#B6A7CF";
+function shade(hex,amt){const n=parseInt(hexOk(hex).slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(v+(amt<0?v*amt:(255-v)*amt))));return"#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join("")}
+function lum(hex){const n=parseInt(hexOk(hex).slice(1),16);return((n>>16)*.299+(n>>8&255)*.587+(n&255)*.114)/255}
+function hash(s){let h=2166136261;for(const c of String(s))h=Math.imul(h^c.charCodeAt(0),16777619);return(h>>>0)/4294967295}
+const loc=()=>({ru:"ru-RU",en:"en-GB"})[S.lang]||S.lang;
+function convert(a,from,to){const b=S.rates.byn;if(!b[from]||!b[to])return null;return a*b[from]/b[to]}
+function niceRound(v){if(v==null)return 0;if(v>=1000)return Math.round(v/10)*10;if(v>=100)return Math.round(v);return Math.round(v)}
+function money(v,cur){const d=v>=100||Number.isInteger(v)?0:2;try{return new Intl.NumberFormat(loc(),{style:"currency",currency:cur,currencyDisplay:"narrowSymbol",maximumFractionDigits:d,minimumFractionDigits:d}).format(v)}catch(e){return Math.round(v)+" "+cur}}
+function shopPrice(pln){const c=shopCur();let v=convert(pln,"PLN",c);if(v==null)return{v:pln,cur:"PLN"};v=v>=1000?Math.round(v/10)*10-1:v>=100?Math.round(v)-1:Math.round(v)-0.01;return{v,cur:c}}
+function priceLine(pln){const p=shopPrice(pln);return "≈ "+money(p.v,p.cur)}
+function convLine(pln){const p=shopPrice(pln);if(p.cur===S.currency)return"";const v=convert(p.v,p.cur,S.currency);return v==null?"":"≈ "+money(v,S.currency)}
+function dateStr(d,opt){try{return new Date(d+(String(d).length===10?"T12:00:00":"")).toLocaleDateString(loc(),opt||{})}catch(e){return d}}
+function todayISO(off=0){const d=new Date();d.setDate(d.getDate()+off);return d.toISOString().slice(0,10)}
+function errText(e){const k="err."+(e?.code||"default");return EN[k]?t(k):t("err.default")}
+
+/* ================= palette & colour maths ================= */
+function palette(){
+  if(S.season==="Cool Summer"||!S.seasonAI) return CS_PAL.map(([k,h,g,en,ru])=>({key:k,hex:h,group:g,name:dl(en,ru,"c."+k)}));
+  return (S.seasonAI.wear||[]).map(([n,h],i)=>({key:"w"+i,hex:hexOk(h),group:"",name:n}));
+}
+function avoidList(){
+  if(S.season==="Cool Summer"||!S.seasonAI) return CS_AVOID.map(([h,en,ru])=>({hex:h,name:dl(en,ru,"av."+en)}));
+  return (S.seasonAI.avoid||[]).map(([n,h])=>({hex:hexOk(h),name:n}));
+}
+const colorBy=key=>palette().find(c=>c.key===key)||palette()[0];
+function hex2rgb(h){const n=parseInt(hexOk(h).slice(1),16);return[n>>16,n>>8&255,n&255]}
+function rgb2hex(r,g,b){return"#"+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("")}
+function rgb2lab([r,g,b]){[r,g,b]=[r,g,b].map(v=>{v/=255;return v>.04045?((v+.055)/1.055)**2.4:v/12.92});
+  let x=(r*.4124+g*.3576+b*.1805)/.95047,y=r*.2126+g*.7152+b*.0722,z=(r*.0193+g*.1192+b*.9505)/1.08883;
+  const f=v=>v>.008856?Math.cbrt(v):7.787*v+16/116;x=f(x);y=f(y);z=f(z);return[116*y-16,500*(x-y),200*(y-z)]}
+function dE(h1,h2){const a=rgb2lab(hex2rgb(h1)),b=rgb2lab(hex2rgb(h2));return Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2])}
+function rate(hex){
+  const pal=palette();let best=pal[0],bd=1e9;for(const c of pal){const d=dE(hex,c.hex);if(d<bd){bd=d;best=c}}
+  let ad=1e9,aw=null;for(const a of avoidList()){const d=dE(hex,a.hex);if(d<ad){ad=d;aw=a}}
+  let score=Math.round(Math.max(0,Math.min(100,100-bd*2.1)));if(aw&&ad<bd&&ad<14)score=Math.min(score,30);
+  const lvl=score>=75?"ok":score>=55?"good":score>=35?"mid":"bad";
+  return{score,lvl,near:best,avoid:ad<bd&&ad<14?aw:null};
+}
+const LVL_COLOR={ok:"var(--ok)",good:"var(--ok)",mid:"var(--mid)",bad:"var(--bad)"};
+
+/* ================= image processing ================= */
+function loadImage(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=u})}
+function toCanvas(img,max){const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);return c}
+function removeBg(src,tol){
+  const w=src.width,h=src.height,c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.drawImage(src,0,0);
+  const im=x.getImageData(0,0,w,h),d=im.data,N=w*h;
+  const border=[];for(let i=0;i<w;i++){border.push(i,(h-1)*w+i)}for(let j=0;j<h;j++){border.push(j*w,j*w+w-1)}
+  const med=[0,1,2].map(ch=>{const v=border.map(p=>d[p*4+ch]).sort((a,b)=>a-b);return v[v.length>>1]});
+  const dist=p=>Math.hypot(d[p*4]-med[0],d[p*4+1]-med[1],d[p*4+2]-med[2]);
+  const bg=new Uint8Array(N),q=[];for(const p of border){if(!bg[p]&&dist(p)<tol*1.4){bg[p]=1;q.push(p)}}
+  while(q.length){const p=q.pop(),px=p%w,py=(p-px)/w;
+    for(const n of [px>0?p-1:-1,px<w-1?p+1:-1,py>0?p-w:-1,py<h-1?p+w:-1]){if(n<0||bg[n])continue;if(dist(n)<tol){bg[n]=1;q.push(n)}}}
+  let removed=0,minx=w,miny=h,maxx=0,maxy=0;
+  for(let p=0;p<N;p++){if(bg[p]){d[p*4+3]=0;removed++}else{const px=p%w,py=(p-px)/w;if(px<minx)minx=px;if(px>maxx)maxx=px;if(py<miny)miny=py;if(py>maxy)maxy=py;
+    const nb=(px>0&&bg[p-1])||(px<w-1&&bg[p+1])||(py>0&&bg[p-w])||(py<h-1&&bg[p+w]);if(nb)d[p*4+3]=150}}
+  x.putImageData(im,0,0);
+  const frac=removed/N;if(frac<.04||maxx<=minx)return{canvas:c,frac};
+  const pad=6,cx=Math.max(0,minx-pad),cy=Math.max(0,miny-pad),cw=Math.min(w,maxx+pad)-cx,ch=Math.min(h,maxy+pad)-cy;
+  const o=document.createElement("canvas");o.width=cw;o.height=ch;o.getContext("2d").drawImage(c,cx,cy,cw,ch,0,0,cw,ch);return{canvas:o,frac};
+}
+function dominant(canvas,opts={}){
+  const x=canvas.getContext("2d"),w=canvas.width,h=canvas.height,d=x.getImageData(0,0,w,h).data,bins=new Map();
+  const x0=Math.floor(w*(opts.crop||0)),x1=w-x0,y0=Math.floor(h*(opts.crop||0)),y1=h-y0,step=Math.max(1,Math.floor(Math.sqrt(w*h/20000)));
+  let bgc=null;if(opts.skipBorder){const s=[];for(let i=0;i<w;i+=step){s.push(i*4,((h-1)*w+i)*4)}bgc=[0,1,2].map(ch=>{const v=s.map(p=>d[p+ch]).sort((a,b)=>a-b);return v[v.length>>1]})}
+  for(let yy=y0;yy<y1;yy+=step)for(let xx=x0;xx<x1;xx+=step){const p=(yy*w+xx)*4;if(d[p+3]<200)continue;const r=d[p],g=d[p+1],b=d[p+2];
+    if(bgc&&Math.hypot(r-bgc[0],g-bgc[1],b-bgc[2])<28)continue;
+    const k=(r>>4)<<8|(g>>4)<<4|(b>>4);const e=bins.get(k)||[0,0,0,0];e[0]++;e[1]+=r;e[2]+=g;e[3]+=b;bins.set(k,e)}
+  let best=null;for(const e of bins.values())if(!best||e[0]>best[0])best=e;
+  return best?rgb2hex(best[1]/best[0],best[2]/best[0],best[3]/best[0]):"#888888";
+}
+
+/* ================= vector garments ================= */
+function ic(type,hex){
+  const c=hexOk(hex),d=shade(c,-.28),l=shade(c,.35),s=`stroke="${d}" stroke-width="1.2" fill="none" stroke-linecap="round"`;
+  const P={
+   coat:`<path d="M36 10 50 24 64 10 80 18 88 74 77 76 74 50 74 122H26L26 50 23 76 12 74 20 18Z" fill="${c}"/><path d="M50 24 42 56 50 64M50 24 58 56 50 64M50 64V122" ${s}/><circle cx="56" cy="78" r="1.8" fill="${d}"/><circle cx="56" cy="92" r="1.8" fill="${d}"/><path d="M30 92h10M60 92h10" ${s}/>`,
+   trench:`<path d="M36 10 50 22 64 10 80 18 86 74 76 76 74 50 76 122H24L26 50 24 76 14 74 20 18Z" fill="${c}"/><path d="M26 64H74" stroke="${d}" stroke-width="4"/><rect x="46" y="60" width="8" height="8" fill="none" stroke="${l}" stroke-width="1.4"/><path d="M50 22 42 46 50 52 58 46 50 22M50 68V122" ${s}/><circle cx="44" cy="40" r="1.6" fill="${d}"/><circle cx="56" cy="40" r="1.6" fill="${d}"/>`,
+   blazer:`<path d="M36 14 50 26 64 14 80 22 86 82 76 84 74 56 74 102H26L26 56 24 84 14 82 20 22Z" fill="${c}"/><path d="M50 26 41 58 50 70M50 26 59 58 50 70M50 70V102M30 84h12" ${s}/><circle cx="53" cy="78" r="1.8" fill="${d}"/>`,
+   knit:`<path d="M40 12h20l2 6 18 8 6 64-10 2-4-50v64H28V42l-4 50-10-2 6-64 18-8Z" fill="${c}"/><path d="M40 12q10 10 20 0" ${s}/><path d="M28 98h44M28 102h44M36 42v52M44 42v52M52 42v52M60 42v52M68 42v52" stroke="${d}" stroke-width=".6" opacity=".5"/>`,
+   turtleneck:`<path d="M41 6h18v12l20 8 7 64-10 2-4-50v62H28V42l-4 50-10-2 7-64 20-8Z" fill="${c}"/><path d="M41 10h18M41 14h18M41 18h18" stroke="${d}" stroke-width=".8"/><path d="M28 96h44M28 100h44" stroke="${d}" stroke-width=".7"/>`,
+   blouse:`<path d="M38 14 44 12 50 22 56 12 62 14 82 28 76 46 66 40 68 98H32L34 40 24 46 18 28Z" fill="${c}"/><path d="M44 12 46 26 50 22 54 26 56 12M50 22V98" ${s}/><circle cx="50" cy="40" r="1.4" fill="${d}"/><circle cx="50" cy="56" r="1.4" fill="${d}"/><circle cx="50" cy="72" r="1.4" fill="${d}"/>`,
+   tee:`<path d="M38 18 44 16Q50 24 56 16L62 18 84 32 78 48 68 42V100H32V42L22 48 16 32Z" fill="${c}"/><path d="M44 16Q50 26 56 16" ${s}/>`,
+   dress:`<path d="M40 8 46 14H54L60 8 64 30 58 46 80 120H20L42 46 36 30Z" fill="${c}"/><path d="M42 46H58M46 14 50 30 54 14M50 46 44 120M50 46 60 120" ${s}/>`,
+   skirt:`<path d="M34 16H66L82 112H18Z" fill="${c}"/><path d="M34 24H66" stroke="${d}" stroke-width="2"/><path d="M40 24 30 112M46 24 42 112M50 24V112M54 24 58 112M60 24 70 112" stroke="${d}" stroke-width=".8" opacity=".7"/>`,
+   trousers:`<path d="M30 10H70L78 122H57L50 44 43 122H22Z" fill="${c}"/><path d="M30 18H70" stroke="${d}" stroke-width="2"/><path d="M40 18 34 122M60 18 66 122M50 18V44" ${s} opacity=".7"/>`,
+   jeans:`<path d="M30 10H70L74 122H56L50 46 44 122H26Z" fill="${c}"/><path d="M30 18H70M50 18V46M36 18Q38 30 46 30M64 18Q62 30 54 30" ${s}/><path d="M28 116h16M56 116h16" stroke="${l}" stroke-width="1.4"/>`,
+   pumps:`<path d="M10 92Q12 70 22 68Q32 70 42 82L76 92Q90 96 90 104H24L22 120H16L14 104Z" fill="${c}"/><path d="M22 68Q30 84 46 88" ${s}/>`,
+   boots:`<path d="M30 8H58L60 84Q80 88 86 98Q88 108 80 110H30Z" fill="${c}"/><path d="M30 110v8h8v-8M58 20H30M54 8V80" ${s}/>`,
+   bag:`<path d="M36 52Q36 24 50 24T64 52" fill="none" stroke="${d}" stroke-width="5"/><path d="M20 50H80L86 114H14Z" fill="${c}"/><path d="M20 62H80" ${s}/><rect x="45" y="58" width="10" height="8" fill="${l}"/>`,
+   scarf:`<path d="M28 16H72L68 58 78 118H62L56 66H44L38 118H22L32 58Z" fill="${c}"/><path d="M32 58H68M22 118v6M28 118v6M34 118v6M62 118v6M68 118v6M74 118v6" ${s}/>`
+  };
+  return `<svg class="ic" viewBox="0 0 100 130" aria-hidden="true">${P[type]||P.tee}</svg>`;
+}
+function tileBg(hex){return lum(hex)>.8?shade(hex,-.07):shade(hex,.8)}
+/* piece = {type, hex, img?} ; img = idb key of a wardrobe cut-out */
+function pieceVis(p){return p.img?`<img alt="" data-img="${esc(p.img)}">`:ic(p.type,p.hex)}
+function tile(p){return `<div class="tile" style="background:${tileBg(p.hex)}">${pieceVis(p)}</div>`}
+const heartSvg='<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+
+function mannequin(pieces){
+  const by=s=>pieces.filter(p=>T_BY[p.type]?.[2]===s);
+  const g=(p,body)=>{const c=hexOk(p.hex),d=shade(c,-.3);return body.replace(/FILL/g,c).replace(/DK/g,d)};
+  const top={tee:`<path d="M44 56Q70 50 96 56L110 66 106 84 96 80 94 142H46L44 80 34 84 30 66Z" fill="FILL" stroke="DK" stroke-width=".8"/>`,
+    blouse:`<path d="M44 56Q70 50 96 56L108 64 114 150 104 152 98 82 95 142H45L42 82 36 152 26 150 32 64Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M62 54 70 66 78 54M70 66V140" stroke="DK" fill="none" stroke-width=".8"/>`,
+    knit:`<path d="M44 56Q70 50 96 56L108 64 114 162 104 164 98 84 95 146H45L42 84 36 164 26 162 32 64Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M45 140H95M36 158H25M104 158H115" stroke="DK" stroke-width="1.2"/>`,
+    turtleneck:`<path d="M44 56Q70 50 96 56L108 64 114 162 104 164 98 84 95 146H45L42 84 36 164 26 162 32 64Z" fill="FILL" stroke="DK" stroke-width=".8"/><rect x="61" y="38" width="18" height="18" rx="4" fill="FILL" stroke="DK" stroke-width=".8"/>`};
+  const bottom={trousers:`<path d="M46 140H94L100 300H75L70 176 65 300H40Z" fill="FILL" stroke="DK" stroke-width=".8"/>`,
+    jeans:`<path d="M46 140H94L89 300H73L70 172 67 300H51Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M46 148H94" stroke="DK" stroke-width="1"/>`,
+    skirt:`<path d="M47 136H93L110 236H30Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M58 140 50 236M70 140V236M82 140 90 236" stroke="DK" stroke-width=".6" opacity=".6"/>`};
+  const dress=`<path d="M45 54Q70 48 95 54L100 66 96 84 92 120 112 238H28L48 120 44 84 40 66Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M48 120H92" stroke="DK" stroke-width="1"/>`;
+  const outer={coat:`<path d="M42 52Q70 46 98 52L112 64 118 172 108 174 102 100 104 252H36L38 100 32 174 22 172 28 64Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M58 52 66 110 70 252M82 52 74 110" stroke="DK" fill="none" stroke-width="1"/>`,
+    trench:`<path d="M42 52Q70 46 98 52L112 64 118 172 108 174 102 100 106 244H34L38 100 32 174 22 172 28 64Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M38 126H102" stroke="DK" stroke-width="4"/><path d="M60 52 66 104 70 244M80 52 74 104" stroke="DK" fill="none" stroke-width="1"/>`,
+    blazer:`<path d="M42 52Q70 46 98 52L112 64 118 166 108 168 102 100 100 168H40L38 100 32 168 22 166 28 64Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M60 52 68 118 70 168M80 52 72 118" stroke="DK" fill="none" stroke-width="1"/>`};
+  const shoes={pumps:`<path d="M54 298H68L71 312H48Z" fill="FILL"/><path d="M72 298H86L92 312H70Z" fill="FILL"/>`,
+    boots:`<path d="M51 236H68L71 312H47Z" fill="FILL" stroke="DK" stroke-width=".8"/><path d="M72 236H89L93 312H70Z" fill="FILL" stroke="DK" stroke-width=".8"/>`};
+  const bag=`<path d="M108 158Q116 138 124 158" fill="none" stroke="DK" stroke-width="3"/><rect x="102" y="156" width="28" height="30" rx="4" fill="FILL" stroke="DK" stroke-width=".8"/>`;
+  const scarf=`<path d="M58 44H82L86 60 78 62 80 118H70L68 62 54 60Z" fill="FILL" stroke="DK" stroke-width=".8"/>`;
+  let out=`<svg viewBox="0 0 140 320" aria-hidden="true"><g fill="var(--skin)" stroke="var(--skin-line)" stroke-width=".8"><circle cx="70" cy="28" r="15"/><rect x="64" y="40" width="12" height="16"/><path d="M44 56Q70 50 96 56L92 120Q90 135 94 150H46Q50 135 48 120Z"/><path d="M44 58 34 60 26 168 34 170 42 100Z"/><path d="M96 58 106 60 114 168 106 170 98 100Z"/><path d="M48 148H68L66 300H56Z"/><path d="M72 148H92L84 300H74Z"/><path d="M56 300H66L68 310H52Z"/><path d="M74 300H84L88 310H72Z"/></g>`;
+  by("bottom").forEach(p=>out+=g(p,bottom[p.type]||bottom.trousers));
+  by("top").forEach(p=>out+=g(p,top[p.type]||top.tee));
+  by("dress").forEach(p=>out+=g(p,dress));
+  by("shoes").forEach(p=>out+=g(p,shoes[p.type]||shoes.pumps));
+  by("outer").forEach(p=>out+=g(p,outer[p.type]||outer.coat));
+  by("acc").forEach(p=>out+=g(p,scarf));
+  by("bag").forEach(p=>out+=g(p,bag));
+  return out+"</svg>";
+}
+
+/* ================= built-in browser bridge ================= */
+let brChain=Promise.resolve();
+async function br(tool,input){const r=await mcp.callTool("host:claude_browser",tool,input,{cache:false});return(r.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").split("\n\nTab Context:")[0]}
+function readJsonPage(url){if(mcp?.direct)return fetch(url).then(r=>{if(!r.ok)throw{message:"HTTP "+r.status};return r.json()});const p=brChain.then(async()=>{await br("navigate",{url});const tx=await br("get_page_text",{max_chars:60000});const a=Math.min(...["[","{"].map(c=>{const i=tx.indexOf(c);return i<0?1e9:i}));const z=Math.max(tx.lastIndexOf("]"),tx.lastIndexOf("}"));return JSON.parse(tx.slice(a,z+1))});brChain=p.catch(()=>{});return p}
+function brErr(e){return["server_not_connected","capability_disabled","not_granted"].includes(e?.code)?t("err.noBrowser"):String(e?.message||t("err.default")).slice(0,160)}
+
+/* ================= stores ================= */
+function storeOk(st){if(S.shopCountry==="BY")return!!st.only?.includes("BY");return!st.only||st.only.includes(S.shopCountry)}
+function itemQuery(type,colKey){
+  if(S.shopCountry==="PL")return`${PL_Q[type]||type} ${PL_C[colKey]||""}`.trim();
+  if(S.shopCountry==="BY"){const T=T_BY[type],c=CS_PAL.find(x=>x[0]===colKey);return`${T?T[4].toLowerCase():type} ${c?c[4].toLowerCase():""}`.trim()}
+  const T=T_BY[type];return`${EN_C[colKey]||""} ${T?T[3].toLowerCase():type}`.trim();
+}
+function storeLink(st,type,colKey){
+  const cc=S.shopCountry,C=C_BY[cc]||C_BY.PL,q=itemQuery(type,colKey),e=encodeURIComponent(q);
+  if(cc==="PL"){if(st.zara)return`https://www.zara.com/pl/pl/search?searchTerm=${e}&section=${S.gender==="m"?"MAN":"WOMAN"}`;if(st.pl)return st.pl(e);if(st.hm)return`https://www2.hm.com/pl_pl/search-results.html?q=${e}`}
+  const site=st.zara?`zara.com/${C[5].split("/")[0]}`:st.hm&&C[6]?`hm.com/${C[6]}`:st.d;
+  return"https://www.google.com/search?q="+encodeURIComponent(`site:${site} ${q}`)+`&gl=${cc.toLowerCase()}&hl=${C[4]}`;
+}
+/* ================= shared builders ================= */
+const typeName=k=>{const T=T_BY[k];return T?dl(T[3],T[4],"i."+k):k};
+function sat(hex){const[r,g,b]=hex2rgb(hex).map(v=>v/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b);return mx===0?0:(mx-mn)/mx}
+function neutrals(){const p=palette();const n=p.filter(c=>c.group?c.group==="neutral":sat(c.hex)<.2);return n.length?n:p.slice(0,4)}
+function accents(){const n=new Set(neutrals().map(c=>c.key));const a=palette().filter(c=>!n.has(c.key));return a.length?a:palette()}
+function pieceFrom(spec){
+  if(typeof spec==="string"&&spec.startsWith("w:")){const w=S.wardrobe.find(x=>x.id===spec.slice(2));if(w)return{type:w.type,hex:w.hex,img:"img:"+w.id,name:w.name||typeName(w.type),colorName:rate(w.hex).near.name,wid:w.id}}
+  const [type,col]=Array.isArray(spec)?spec:["tee",""];const c=colorBy(col);return{type,colorKey:c.key,hex:c.hex,name:typeName(type),colorName:c.name};
+}
+function catItem(type,colKey,seg){
+  const T=T_BY[type]||T_BY.tee,c=colorBy(colKey),sg=seg||(S.segs[0]||"budget"),[a,b]=T[5][SEGS.indexOf(sg)],h=hash(type+c.key+sg);
+  const price=Math.round(a+(b-a)*h);const st=STORES.filter(s=>s.seg===sg&&storeOk(s)&&S.stores.includes(s.id));
+  const i=Math.floor(h*Math.max(1,st.length));
+  return{id:type+"-"+c.key+"-"+sg,type,cat:T[1],colorKey:c.key,hex:c.hex,colorName:c.name,seg:sg,price,stores:[st[i%st.length],st[(i+1)%st.length]].filter((x,j,arr)=>x&&arr.indexOf(x)===j).map(s=>s.id)};
+}
+function normItem(it){if(it.color&&!it.hex){it.hex=it.color.hex;it.colorKey=it.color.key;it.colorName=it.color.name}return it}
+S.favs=S.favs.map(normItem);
+
+/* ================= header / i18n ================= */
+function applyI18n(){
+  document.documentElement.lang=S.lang;
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll("[data-ph]").forEach(el=>el.placeholder=t(el.dataset.ph));
+}
+function renderHeader(){
+  $("curPill").textContent=S.currency;$("curPill").setAttribute("aria-label",t("cv.title"));
+  const n=S.favs.length+S.favLooks.length;$("favCnt").hidden=!n;$("favCnt").textContent=n;
+  $("savedBtn").setAttribute("aria-label",t("saved.title"));
+}
+$("savedBtn").onclick=()=>{location.hash="saved"};
+$("curPill").onclick=()=>openConverter();
+function segHtml(id,opts,cur){$(id).innerHTML=opts.map(([k,l])=>`<button type="button" data-k="${k}" aria-pressed="${cur===k}">${esc(l)}</button>`).join("")}
+
+/* ================= PROFILE ================= */
+function renderAvatar(){$("avatar").innerHTML=S.avatar?`<img alt="" src="${S.avatar}">`:esc((S.name||"?").trim().charAt(0).toUpperCase()||"?")}
+async function loadAvatar(file){if(!file)return;const img=await loadImage(file);const c=document.createElement("canvas"),sz=320;c.width=c.height=sz;const k=Math.max(sz/img.width,sz/img.height),w=img.width*k,h=img.height*k;c.getContext("2d").drawImage(img,(sz-w)/2,(sz-h)/2,w,h);try{S.avatar=c.toDataURL("image/jpeg",.85)}catch(e){}persist();renderAvatar()}
+$("avGallery").onchange=e=>{loadAvatar(e.target.files[0]);e.target.value=""};
+$("avCamera").onchange=e=>{loadAvatar(e.target.files[0]);e.target.value=""};
+$("nameIn").onchange=()=>{S.name=$("nameIn").value.trim();persist();renderAvatar()};
+function curOptions(sel){const keys=Object.keys(S.rates.byn),top=["EUR","PLN","BYN","GBP","USD","CHF","CZK","SEK","DKK","NOK"];return[...top.filter(k=>keys.includes(k)),...keys.filter(k=>!top.includes(k)).sort()].map(k=>`<option value="${k}" ${k===sel?"selected":""}>${k}</option>`).join("")}
+function seasonData(){
+  if(S.season==="Cool Summer"||!S.seasonAI){const tx=S.lang==="ru"?CS_TEXT.ru:CS_TEXT.en;return{desc:dl(CS_TEXT.en.desc,CS_TEXT.ru.desc,"cs.desc"),makeup:tx.makeup,hair:tx.hair,local:S.lang==="ru"?CS_TEXT.ru.nameLocal:""}}
+  const a=S.seasonAI;return{desc:a.description,makeup:a.makeup,hair:a.hair,local:S.lang!=="en"?a.nameRu||"":""};
+}
+function kv(o){return Object.entries(o||{}).map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}
+function renderProfile(){
+  $("nameIn").value=S.name||"";renderAvatar();
+  const d=seasonData(),pal=palette();
+  $("seasonName").innerHTML=esc(S.season)+(d.local?`<small>${esc(d.local)}</small>`:"");
+  $("palStrip").innerHTML=pal.map(c=>`<b style="background:${c.hex}" title="${esc(c.name)}"></b>`).join("");
+  $("palCount").textContent=t("prof.count",{n:pal.length});
+  const groups=[...new Set(pal.map(c=>c.group))];
+  $("palFull").innerHTML=groups.map(g=>`<div class="pgroup">${g?`<h5>${esc(t("g."+g))}</h5>`:""}<div class="sw">${pal.filter(c=>c.group===g).map(c=>`<div><b style="background:${c.hex}"></b>${esc(c.name)}</div>`).join("")}</div></div>`).join("");
+  $("seasonSel").innerHTML=`<option value="">${esc(t("prof.choose"))}</option>`+SEASONS.map(n=>`<option ${n===S.season?"selected":""}>${n}</option>`).join("");
+  $("bodySel").innerHTML=`<option value="">—</option>`+BODY.map(([k,en,ru])=>`<option value="${k}" ${S.body===k?"selected":""}>${esc(dl(en,ru,"b."+k))}</option>`).join("");
+  segHtml("tySys",[["kibbe",t("sys.kibbe")],["larson",t("sys.larson")]],S.typeSys);
+  const TL=S.typeSys==="larson"?LARSON:KIBBE,tv=S.typeSys==="larson"?S.larson:S.kibbe,tp=S.typeSys==="larson"?"lr.":"k.";
+  $("kibbeSel").innerHTML=`<option value="">—</option>`+TL.map(([k,en,ru])=>`<option value="${k}" ${tv===k?"selected":""}>${esc(dl(en,ru,tp+k))}</option>`).join("");
+  $("noteIn").value=S.note||"";
+  $("sDesc").textContent=d.desc||"";
+  $("sAvoid").innerHTML=avoidList().slice(0,6).map(a=>`<span><b style="background:${a.hex}"></b>${esc(a.name)}</span>`).join("");
+  $("sMakeup").innerHTML=kv(d.makeup);$("sHair").innerHTML=kv(d.hair);
+  $("makeupBlock").hidden=$("hairBlock").hidden=S.gender!=="f";
+  segHtml("gender",[["f",t("g.f")],["m",t("g.m")]],S.gender);
+  $("langSel").innerHTML=LANGS.filter(([k])=>sample||k==="en"||k==="ru"||S.tr[k]).map(([k,n])=>`<option value="${k}" ${k===S.lang?"selected":""}>${n}</option>`).join("");
+  $("langHint").textContent=!["en","ru"].includes(S.lang)&&S.tr[S.lang]?t("lang.ai"):"";
+  $("shopCountry").innerHTML=COUNTRIES.map(c=>`<option value="${c[0]}" ${c[0]===S.shopCountry?"selected":""}>${esc(S.lang==="ru"?c[2]:c[1])}</option>`).join("");
+  $("curSel").innerHTML=curOptions(S.currency);
+  $("geoHint").textContent=S.geo?.src==="ip"?t("geo.ip",{x:S.geo.label}):S.geo?.src==="manual"?t("geo.manual"):t("geo.tz",{x:S.geo?.label||"—"});
+  $("ipBtn").hidden=!mcp;
+  $("analyzeBtn").hidden=!sample;
+  document.querySelector('nav.tabs a[data-v="stylist"]').hidden=!sample;document.querySelector("nav.tabs .in").style.gridTemplateColumns=`repeat(${sample?5:4},1fr)`;
+}
+const pal=$("pal");pal.onclick=()=>{pal.classList.toggle("open");pal.setAttribute("aria-expanded",pal.classList.contains("open"))};
+pal.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pal.click()}};
+$("gender").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.gender=k;persist();renderAll()};
+$("bodySel").onchange=e=>{S.body=e.target.value;persist()};
+$("kibbeSel").onchange=e=>{if(S.typeSys==="larson")S.larson=e.target.value;else S.kibbe=e.target.value;persist()};
+$("tySys").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.typeSys=k;persist();renderProfile()};
+$("noteIn").onchange=e=>{S.note=e.target.value.trim();persist()};
+$("curSel").onchange=e=>{S.currency=e.target.value;S.geo={src:"manual"};persist();renderAll()};
+$("shopCountry").onchange=e=>{const old=shopCur();S.shopCountry=e.target.value;S.stores=[...new Set([...S.stores,...STORES.filter(s=>s.only?.includes(S.shopCountry)).map(s=>s.id)])];const nc=shopCur();if(old!==nc){S.pmin=niceRound(convert(S.pmin,old,nc)||0);S.pmax=niceRound(convert(S.pmax,old,nc)||0)}persist();renderAll()};
+$("analyzeBtn").onclick=()=>openAnalyzer();
+$("checkBtn2").onclick=()=>{S.shSeg="check";persist();location.hash="shop";renderShop()};
+$("ipBtn").onclick=async()=>{
+  const b=$("ipBtn");b.disabled=true;
+  try{const r=await readJsonPage("https://ipapi.co/json/");const cc=String(r.country_code||"").toUpperCase();
+    if(cc==="BY"){S.shopCountry="PL";S.currency="BYN"}else if(C_BY[cc]){S.shopCountry=cc;S.currency=C_BY[cc][3]}else{const cur=String(r.currency||"").toUpperCase();if(S.rates.byn[cur])S.currency=cur}
+    S.geo={src:"ip",label:[r.city,r.country_name].filter(Boolean).join(", ")};S.pmax=niceRound(convert(2000,"PLN",shopCur()));persist();renderAll();
+  }catch(e){$("geoHint").textContent=brErr(e)}finally{b.disabled=false}
+};
+const SEASON_JSON=()=>`Write all text in ${langName()}. Reply with ONLY JSON:
+{"name":"<one of the 12 seasons in English>","nameRu":"<season name in ${langName()}>","confidence":"<high|medium|low in ${langName()}>","description":"<3-4 sentences: undertone, contrast, depth, chroma>","wear":[["<colour name>","#RRGGBB"], ...exactly 24],"avoid":[["<colour name>","#RRGGBB"], ...exactly 6],"makeup":{"<Lips>":"...","<Blush>":"...","<Eyes>":"...","<Brows>":"...","<Base>":"..."},"hair":{"<Best>":"...","<Avoid>":"..."}}`;
+function appearance(){const b=BODY.find(x=>x[0]===S.body),k=S.typeSys==="larson"?LARSON.find(x=>x[0]===S.larson):KIBBE.find(x=>x[0]===S.kibbe);return[b?"Body shape: "+b[1]:"",k?(S.typeSys==="larson"?"Larson":"Kibbe")+" type: "+k[1]:"",S.note?"Note from the user: "+S.note:""].filter(Boolean).join(". ")}
+$("seasonSel").onchange=async e=>{
+  const n=e.target.value;if(!n)return;
+  if(n==="Cool Summer"){S.season=n;S.seasonAI=null;S.color="";persist();renderAll();return}
+  if(!sample){$("seasonHint").textContent=t("season.na");return}
+  $("seasonHint").textContent=t("season.wait");
+  try{const r=await sample.json(`You are a 12-season colour analyst. Build the profile of the ${n} colour type for a stylist app. ${SEASON_JSON()}`,{cache:{gcTime:86400000}});
+    if(!r?.wear?.length)throw{code:"invalid_json"};S.season=n;S.seasonAI=r;S.color="";persist();$("seasonHint").textContent="";renderAll();
+  }catch(err){$("seasonHint").textContent=errText(err)}
+};
+function openAnalyzer(){
+  const can=sample&&imgLimits;
+  openSheet(`<button class="closex" type="button">${esc(t("close"))}</button>
+    <span class="eyebrow">${esc(t("an.eyebrow"))}</span><h4>${esc(t("an.title"))}</h4>
+    <p class="hint" style="margin:0">${esc(t("an.how"))}</p>
+    <ul class="rules">${[1,2,3,4,5,6].map(i=>`<li>${esc(t("an.r"+i))}</li>`).join("")}</ul>
+    ${appearance()?`<p class="hint">${esc(t("an.uses"))}</p>`:""}
+    ${can?`<div class="row"><label class="btn soft" for="faceFile">${esc(t("an.pick"))}</label><input id="faceFile" type="file" accept="${esc(imgLimits.mediaTypes.join(","))}" hidden><button class="btn acc" id="faceGo" type="button" disabled>${esc(t("an.go"))}</button></div>
+    <div class="preview" id="facePrev" style="margin-top:10px"></div><div id="faceOut"></div>`:`<div class="msg">${esc(t("an.na"))}</div>`}`);
+  if(!can)return;let file=null;
+  $("faceFile").onchange=e=>{file=e.target.files[0];if(!file)return;$("facePrev").innerHTML=`<img alt="" src="${URL.createObjectURL(file)}">`;$("faceGo").disabled=false};
+  $("faceGo").onclick=async()=>{
+    $("faceGo").disabled=true;$("faceOut").innerHTML=`<div class="loader"><i></i></div><p class="hint">${esc(t("an.wait"))}</p>`;
+    try{const r=await sample.json(`You are an experienced 12-season colour analyst. The photo shows a person without makeup, hair pulled back, neutral background, white T-shirt. Assess skin undertone, depth, contrast between skin, hair and eyes, and chroma. Lighting and camera distort colour. ${appearance()}. Choose the single most likely season. ${SEASON_JSON()}`,{images:file,modelTier:"complex",cache:false});
+      if(!r?.wear?.length)throw{code:"invalid_json"};
+      S.season=SEASONS.includes(r.name)?r.name:String(r.name||"");S.seasonAI=S.season==="Cool Summer"?null:r;S.color="";persist();closeSheet();renderAll();
+    }catch(err){$("faceOut").innerHTML=`<div class="msg">${esc(errText(err))}</div>`;$("faceGo").disabled=false}
+  };
+}
+$("langSel").onchange=async e=>{
+  const lg=e.target.value;
+  if(lg==="en"||lg==="ru"||S.tr[lg]){S.lang=lg;persist();renderAll();return}
+  if(!sample){$("langHint").textContent=t("lang.needAi");e.target.value=S.lang;return}
+  $("langHint").textContent=t("lang.translating");
+  const dict={...EN};CS_PAL.forEach(([k,,,en])=>dict["c."+k]=en);TYPES.forEach(([k,,,en])=>dict["i."+k]=en);
+  STYLE_TAGS.forEach(([k,en])=>dict["s."+k]=en);AVOID_TAGS.forEach(([k,en])=>dict["a."+k]=en);BODY.forEach(([k,en])=>dict["b."+k]=en);KIBBE.forEach(([k,en])=>dict["k."+k]=en);LARSON.forEach(([k,en])=>dict["lr."+k]=en);
+  LOOKS.forEach(([id,en])=>dict["l."+id]=en);CS_AVOID.forEach(([,en])=>dict["av."+en]=en);dict["cs.desc"]=CS_TEXT.en.desc;
+  const name=LANGS.find(x=>x[0]===lg)[1];
+  try{const r=await sample.json(`Translate the values of this JSON object from English into ${name} for a fashion app UI. Keep keys and {placeholders} unchanged; short and natural. Reply with ONLY the JSON object.\n\n${JSON.stringify(dict)}`,{cache:{gcTime:86400000}});
+    if(!r||typeof r!=="object")throw{code:"invalid_json"};S.tr[lg]=r;S.lang=lg;persist();renderAll();
+  }catch(err){$("langHint").textContent=errText(err);e.target.value=S.lang}
+};
+
+/* ================= WARDROBE ================= */
+function scoreBadge(r){return`<span class="score"><i style="background:${LVL_COLOR[r.lvl]}"></i>${r.score}%</span>`}
+function renderWardrobe(){
+  segHtml("wSeg",[["items",t("ward.items")],["diary",t("ward.diary")]],S.wSeg);
+  $("wItems").hidden=S.wSeg!=="items";$("wDiary").hidden=S.wSeg!=="diary";
+  $("wardGrid").innerHTML=`<button class="add-tile" type="button" id="addItem"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>${esc(t("ward.add"))}<span class="hint" style="margin:0;font-weight:500">${esc(t("ward.addHint"))}</span></button>`+
+    S.wardrobe.map((w,i)=>{const r=rate(w.hex);return`<button class="item" type="button" data-w="${i}"><div style="position:relative">${tile({type:w.type,hex:w.hex,img:"img:"+w.id})}${scoreBadge(r)}</div>
+      <div class="meta"><span class="name">${esc(w.name||typeName(w.type))}</span><span class="col"><b style="background:${w.hex}"></b>${esc(t("lvl."+r.lvl))}</span></div></button>`}).join("");
+  $("diaryList").innerHTML=S.diary.length?S.diary.map((d,i)=>`<div class="entry"><img alt="" data-img="img:${esc(d.id)}"><div style="display:grid;gap:6px;align-content:start;min-width:0">
+     <b>${esc(dateStr(d.date,{weekday:"long",day:"numeric",month:"long"}))}</b>
+     <input class="inp" data-dnote="${i}" value="${esc(d.note||"")}" placeholder="${esc(t("diary.notePh"))}">
+     ${d.ai?`<p style="margin:0;font-size:14px">${esc(d.ai)}</p>`:sample&&imgLimits?`<button class="btn soft sm" type="button" data-dai="${i}">${esc(t("diary.rate"))}</button>`:""}
+     <button class="btn soft sm" type="button" data-ddel="${i}" style="justify-self:start">${esc(t("del"))}</button></div></div>`).join(""):`<div class="empty">${esc(t("diary.empty"))}</div>`;
+  hydrateImgs($("v-wardrobe"));
+}
+$("wSeg").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.wSeg=k;persist();renderWardrobe()};
+$("wardGrid").onclick=e=>{if(e.target.closest("#addItem")){openAddItem();return}const b=e.target.closest("[data-w]");if(b)openWardItem(S.wardrobe[+b.dataset.w])};
+function openAddItem(){
+  openSheet(`<button class="closex" type="button">${esc(t("close"))}</button><h4>${esc(t("ward.add"))}</h4>
+    <p class="hint" style="margin:0 0 12px">${esc(t("ward.photoTip"))}</p>
+    <div class="row"><label class="btn soft" for="wiGal">${esc(t("prof.gallery"))}</label><label class="btn soft" for="wiCam">${esc(t("prof.camera"))}</label>
+    <input id="wiGal" type="file" accept="image/*" hidden><input id="wiCam" type="file" accept="image/*" capture="environment" hidden></div>
+    <div id="wiEdit" hidden style="margin-top:14px">
+      <div class="cutout" id="wiPrev"></div>
+      <div class="field"><label class="between"><span>${esc(t("ward.bg"))}</span><span><input type="checkbox" id="wiBgOn" checked> </span></label><input type="range" id="wiTol" min="8" max="90" value="38"></div>
+      <p class="hint" id="wiBgHint" style="margin:0"></p>
+      <div class="grid2"><div class="field"><label for="wiType">${esc(t("ward.type"))}</label><select class="inp" id="wiType">${TYPES.map(T=>`<option value="${T[0]}">${esc(typeName(T[0]))}</option>`).join("")}</select></div>
+      <div class="field"><label for="wiName">${esc(t("ward.name"))}</label><input class="inp" id="wiName" type="text"></div></div>
+      <div id="wiScore" style="margin-top:12px"></div>
+      <button class="btn acc block" type="button" id="wiSave" style="margin-top:14px">${esc(t("ward.save"))}</button>
+    </div>`);
+  let src=null,out=null;
+  const redo=()=>{if(!src)return;const on=$("wiBgOn").checked;let frac=0;if(on){const r=removeBg(src,+$("wiTol").value);out=r.canvas;frac=r.frac}else{out=src}
+    $("wiPrev").innerHTML="";$("wiPrev").appendChild(out);
+    $("wiBgHint").textContent=on&&frac<.04?t("ward.bgFail"):"";
+    const hex=dominant(out,on&&frac>=.04?{}:{crop:.25,skipBorder:true}),r=rate(hex);out._hex=hex;
+    $("wiScore").innerHTML=verdictHtml(r,hex)};
+  const pick=async f=>{if(!f)return;const img=await loadImage(f);src=toCanvas(img,640);$("wiEdit").hidden=false;redo()};
+  $("wiGal").onchange=e=>pick(e.target.files[0]);$("wiCam").onchange=e=>pick(e.target.files[0]);
+  $("wiTol").oninput=redo;$("wiBgOn").onchange=redo;
+  $("wiSave").onclick=async()=>{if(!out)return;const id="w"+Date.now().toString(36);
+    const small=toCanvas(out,420);let url="";try{url=small.toDataURL("image/png")}catch(e){}
+    await IDB.set("img:"+id,url);
+    S.wardrobe.unshift({id,type:$("wiType").value,name:$("wiName").value.trim(),hex:out._hex,created:todayISO()});persist();closeSheet();renderWardrobe()};
+}
+function verdictHtml(r,hex){
+  return`<div style="display:grid;gap:4px"><div class="between"><b class="v-${r.lvl==="good"?"ok":r.lvl}">${esc(t("lvl."+r.lvl))}</b><b>${r.score}%</b></div>
+    <div class="meter"><i style="width:${r.score}%;background:${LVL_COLOR[r.lvl]}"></i></div>
+    <span class="hint" style="margin:0;display:flex;gap:6px;align-items:center"><b style="width:14px;height:14px;border-radius:50%;background:${hex};display:inline-block"></b>${esc(t("ward.near",{c:r.near.name}))}${r.avoid?" · "+esc(t("ward.avoidNear",{c:r.avoid.name})):""}</span></div>`;
+}
+function openWardItem(w){
+  const r=rate(w.hex);
+  openSheet(`<button class="closex" type="button">${esc(t("close"))}</button><div style="clear:both"></div>
+    <div class="tile" style="background:${tileBg(w.hex)}"><img alt="" data-img="img:${esc(w.id)}" style="width:70%;height:90%"></div>
+    <h4 style="margin-top:12px">${esc(w.name||typeName(w.type))}</h4>
+    ${verdictHtml(r,w.hex)}
+    ${w.ai?`<div class="msg">${esc(w.ai)}</div>`:""}
+    <div class="row" style="margin:14px 0 6px">${sample&&imgLimits&&!w.ai?`<button class="btn soft sm" type="button" id="wAi">${esc(t("ward.aiRate"))}</button>`:""}</div>
+    <h3 style="margin:14px 0 8px;font-size:16px">${esc(t("build.title"))}</h3>
+    ${buildControls()}
+    <div id="buildOut"></div>
+    <button class="btn soft sm" type="button" id="wDel" style="margin-top:16px">${esc(t("del"))}</button>`);
+  hydrateImgs($("sheetRoot"));wireBuild({type:w.type,hex:w.hex,img:"img:"+w.id,name:w.name||typeName(w.type),wid:w.id});
+  $("wDel").onclick=()=>{S.wardrobe=S.wardrobe.filter(x=>x.id!==w.id);IDB.del("img:"+w.id);persist();closeSheet();renderWardrobe()};
+  const ai=$("wAi");if(ai)ai.onclick=async()=>{ai.disabled=true;ai.textContent=t("wait");
+    try{const blob=await (await fetch(await IDB.get("img:"+w.id))).blob();
+      const res=await sample.json(`The image shows one clothing item owned by a ${S.gender==="f"?"woman":"man"} with the ${S.season} colour type (palette: ${palette().map(c=>c.name+" "+c.hex).join(", ")}). In ${langName()}, judge in 2 short sentences how well its colour suits her, and suggest a short name for the item. Reply with ONLY JSON {"name":"","comment":""}`,{images:blob,cache:false});
+      w.ai=String(res.comment||"");if(!w.name&&res.name)w.name=String(res.name);persist();closeSheet();openWardItem(w);renderWardrobe();
+    }catch(err){ai.textContent=errText(err)}};
+}
+/* build-around */
+function buildControls(){return`<div class="seg" id="bMode" style="margin-bottom:8px"><button type="button" data-k="look" aria-pressed="true">${esc(t("build.look"))}</button><button type="button" data-k="one" aria-pressed="false">${esc(t("build.one"))}</button></div>
+  <div class="chips" id="bSlot" hidden>${["top","bottom","outer","shoes","bag","acc"].map((s,i)=>`<button type="button" class="chip" data-s="${s}" aria-pressed="${i===0}">${esc(t("slot."+s))}</button>`).join("")}</div>
+  <div class="row" style="margin-top:8px"><button class="btn acc sm" type="button" id="bGo">${esc(t("build.go"))}</button>${sample?`<button class="btn soft sm" type="button" id="bAi">${esc(t("build.ai"))}</button>`:""}</div>`}
+const SLOT_TYPES={top:["turtleneck","knit","blouse","tee"],bottom:["trousers","skirt","jeans"],outer:["coat","trench","blazer"],shoes:["boots","pumps"],bag:["bag"],acc:["scarf"],dress:["dress"]};
+const NEED={top:["bottom","outer","shoes","bag"],bottom:["top","outer","shoes","bag"],dress:["outer","shoes","bag"],outer:["top","bottom","shoes","bag"],shoes:["top","bottom","bag"],bag:["top","bottom","shoes"],acc:["top","bottom","outer","shoes"]};
+function harmonize(base,slot,n,seed){
+  const isNeutral=sat(base.hex)<.2,neu=neutrals().filter(c=>dE(c.hex,base.hex)>12),acc=accents().filter(c=>dE(c.hex,base.hex)>12);
+  const pool=(slot==="top"||slot==="bag"||slot==="acc")&&isNeutral?acc:neu.length?neu:palette();
+  const out=[];for(let i=0;i<n;i++){const h=hash(seed+slot+i);out.push(pool[Math.floor(h*pool.length)%pool.length])}
+  return out;
+}
+function localBuild(base,mode,slot){
+  const bslot=T_BY[base.type]?.[2]||"top",seed=base.hex+base.type;
+  if(mode==="one"){const types=SLOT_TYPES[slot];return harmonize(base,slot,3,seed).map((c,i)=>pieceFrom([types[i%types.length],c.key]))}
+  const pieces=[base];
+  for(const s of NEED[bslot]){
+    const own=S.wardrobe.find(w=>w.id!==base.wid&&T_BY[w.type]?.[2]===s&&rate(w.hex).score>=55&&dE(w.hex,base.hex)>12);
+    if(own){pieces.push(pieceFrom("w:"+own.id));continue}
+    const types=SLOT_TYPES[s],c=harmonize(base,s,1,seed)[0];pieces.push(pieceFrom([types[Math.floor(hash(seed+s)*types.length)],c.key]));
+  }
+  return pieces;
+}
+function piecesHtml(pieces,withMq){
+  return`${withMq?`<div class="mq-wrap" style="margin:10px 0">${mannequin(pieces)}</div>`:""}<div class="links">${pieces.map((p,i)=>`<button type="button" data-pi="${i}"><span class="mini"><b style="background:${tileBg(p.hex)}">${pieceVis(p)}</b><span>${esc(p.name)}${p.colorName?" · "+esc(p.colorName):""}</span></span><span>${p.wid?esc(t("build.mine")):esc(t("item.shop"))}</span></button>`).join("")}</div>`;
+}
+function wireBuild(base){
+  let mode="look",slot="top";
+  $("bMode").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;mode=k;$("bMode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));$("bSlot").hidden=k!=="one"};
+  $("bSlot").onclick=e=>{const s=e.target.closest("[data-s]")?.dataset.s;if(!s)return;slot=s;$("bSlot").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===s))};
+  const show=pieces=>{const list=mode==="look"?pieces:pieces;$("buildOut").innerHTML=piecesHtml(list,mode==="look");hydrateImgs($("buildOut"));
+    $("buildOut").querySelector(".links").onclick=e=>{const b=e.target.closest("[data-pi]");if(!b)return;const p=list[+b.dataset.pi];if(p.wid){const w=S.wardrobe.find(x=>x.id===p.wid);if(w&&w.id!==base.wid)openWardItem(w);return}openItem(catItem(p.type,p.colorKey))};};
+  $("bGo").onclick=()=>show(localBuild(base,mode,slot));
+  const ai=$("bAi");if(ai)ai.onclick=async()=>{ai.disabled=true;$("buildOut").innerHTML=`<div class="loader"><i></i></div>`;
+    const pal=palette(),wl=S.wardrobe.filter(w=>w.id!==base.wid).map(w=>`w:${w.id}=${typeName(w.type)} ${rate(w.hex).near.name}`).join("; ");
+    try{const r=await sample.json(`You are a stylist. Base piece: ${base.name} (${base.type}, colour ${base.hex}). Client: ${S.gender==="f"?"woman":"man"}, colour type ${S.season}. ${appearance()}. Liked styles: ${likedStyles()}.
+${mode==="look"?"Build ONE complete outfit around the base piece (3-4 more pieces).":`Suggest 3 options of ONE piece for the slot "${slot}" that go with the base piece.`}
+Allowed colours (keys): ${pal.map(c=>c.key+"="+c.hex).join(", ")}
+Allowed types: ${TYPES.map(x=>x[0]+"("+x[2]+")").join(", ")}
+Pieces the client owns (prefer them when they fit): ${wl||"none"}
+Reply with ONLY JSON {"why":"<1 sentence in ${langName()}>","pieces":[["type","colourKey"] or "w:<id>", ...]}`,{cache:false});
+      const okT=new Set(TYPES.map(x=>x[0])),okC=new Set(pal.map(c=>c.key));
+      const ps=(r.pieces||[]).filter(p=>typeof p==="string"?S.wardrobe.some(w=>"w:"+w.id===p):okT.has(p[0])&&okC.has(p[1])).map(pieceFrom);
+      if(!ps.length)throw{code:"invalid_json"};show(mode==="look"?[base,...ps]:ps);if(r.why)$("buildOut").insertAdjacentHTML("afterbegin",`<p class="msg">${esc(r.why)}</p>`);
+    }catch(err){$("buildOut").innerHTML=`<div class="msg">${esc(errText(err))}</div>`}finally{ai.disabled=false}};
+}
+/* diary */
+async function addDiary(f){if(!f)return;const img=await loadImage(f);const c=toCanvas(img,720);const id="d"+Date.now().toString(36);let url="";try{url=c.toDataURL("image/jpeg",.82)}catch(e){}
+  await IDB.set("img:"+id,url);S.diary.unshift({id,date:todayISO(),note:""});persist();renderWardrobe()}
+$("diaryCam").onchange=e=>{addDiary(e.target.files[0]);e.target.value=""};$("diaryGal").onchange=e=>{addDiary(e.target.files[0]);e.target.value=""};
+$("diaryList").onchange=e=>{const i=e.target.dataset.dnote;if(i!=null){S.diary[+i].note=e.target.value;persist()}};
+$("diaryList").onclick=async e=>{
+  const del=e.target.closest("[data-ddel]");if(del){const d=S.diary[+del.dataset.ddel];IDB.del("img:"+d.id);S.diary.splice(+del.dataset.ddel,1);persist();renderWardrobe();return}
+  const b=e.target.closest("[data-dai]");if(!b)return;const d=S.diary[+b.dataset.dai];b.disabled=true;b.textContent=t("wait");
+  try{const blob=await (await fetch(await IDB.get("img:"+d.id))).blob();
+    const r=await sample(`This is today's outfit selfie of a ${S.gender==="f"?"woman":"man"} with the ${S.season} colour type. ${appearance()}. In ${langName()}, give 2-3 short, kind and specific sentences: what works with her colouring and one improvement. No intro.`,{images:blob,cache:false});
+    d.ai=r.text.trim();persist();renderWardrobe();
+  }catch(err){b.textContent=errText(err)}
+};
+
+/* ================= STYLE ================= */
+function likedStyles(){return S.styleTags.map(k=>STYLE_TAGS.find(x=>x[0]===k)?.[1]).filter(Boolean).join(", ")||"any"}
+function allLooks(){
+  const base=LOOKS.map(([id,en,ru,occ,temp,tags,items])=>({id,name:dl(en,ru,"l."+id),occ,temp,tags,items}));
+  return S.aiLooks?[...S.aiLooks.map((l,i)=>({...l,id:l.id||"ai"+i,ai:true})),...base]:base;
+}
+function visibleLooks(){
+  const all=allLooks(),o=S.occ;
+  let list=all.filter(l=>o==="all"||(l.occ||[]).includes(o));
+  const sel=S.styleTags;const st=list.filter(l=>l.ai||!sel.length||l.tags?.some(x=>sel.includes(x)));
+  return st.length?st:list;
+}
+function lookCard(l,src,i){
+  const ps=l.items.map(pieceFrom),fav=S.favLooks.some(x=>x.id===l.id);
+  return`<button class="look" type="button" data-src="${src}" data-i="${i}"><div class="board">${ps.slice(0,4).map(p=>`<div style="background:${tileBg(p.hex)}">${pieceVis(p)}</div>`).join("")}</div>
+    <span class="heart" role="button" tabindex="0" aria-pressed="${fav}" aria-label="${esc(t("item.save"))}">${heartSvg}</span>
+    <span class="ttl">${esc(l.name)}</span><span class="sub2">${esc((l.occ||[]).map(o=>t("occ."+o)).join(" · "))}</span>
+    <span class="dots">${ps.map(p=>`<b style="background:${p.hex}"></b>`).join("")}</span></button>`;
+}
+let VIS_LOOKS=[];
+function renderStyle(){
+  segHtml("sSeg",[["looks",t("style.looks")],["week",t("style.week")],["trip",t("style.trip")],["insp",t("style.insp")]],S.sSeg);
+  ["looks","week","trip","insp"].forEach(k=>$("s"+k[0].toUpperCase()+k.slice(1)).hidden=S.sSeg!==k);
+  $("occChips").innerHTML=["all",...OCC].map(k=>`<button type="button" class="chip" data-o="${k}" aria-pressed="${S.occ===k}">${esc(t("occ."+k))}</button>`).join("");
+  VIS_LOOKS=visibleLooks();$("looksNote").textContent=t("style.count",{n:VIS_LOOKS.length});
+  $("looks").innerHTML=VIS_LOOKS.map((l,i)=>lookCard(l,"v",i)).join("");$("genLooks").hidden=!sample;
+  renderWeek();renderTrip();renderInsp();hydrateImgs($("v-style"));
+}
+$("sSeg").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.sSeg=k;persist();renderStyle()};
+$("occChips").onclick=e=>{const k=e.target.closest("[data-o]")?.dataset.o;if(!k)return;S.occ=k;persist();renderStyle()};
+function lookClick(e){
+  const card=e.target.closest(".look");if(!card)return;const list=card.dataset.src==="f"?S.favLooks:VIS_LOOKS;const l=list[+card.dataset.i];if(!l)return;
+  if(e.target.closest(".heart")){e.preventDefault();S.favLooks=S.favLooks.some(x=>x.id===l.id)?S.favLooks.filter(x=>x.id!==l.id):[...S.favLooks,l];persist();renderStyle();renderSaved();renderHeader();return}
+  openLook(l);
+}
+$("looks").onclick=lookClick;$("savedLooks").onclick=lookClick;
+function openLook(l){
+  const ps=l.items.map(pieceFrom);const total=ps.filter(p=>!p.wid).reduce((s,p)=>s+catItem(p.type,p.colorKey).price,0);
+  openSheet(`<button class="closex" type="button">${esc(t("close"))}</button><div style="clear:both"></div>
+    <div class="seg" id="lvSeg" style="margin-top:6px"><button type="button" data-k="mq" aria-pressed="true">${esc(t("look.mq"))}</button><button type="button" data-k="board" aria-pressed="false">${esc(t("look.board"))}</button></div>
+    <div id="lvMq" class="mq-wrap">${mannequin(ps)}</div>
+    <div id="lvBoard" class="board" hidden>${ps.slice(0,4).map(p=>`<div style="background:${tileBg(p.hex)}">${pieceVis(p)}</div>`).join("")}</div>
+    <span class="eyebrow" style="display:block;margin-top:12px">${esc((l.occ||[]).map(o=>t("occ."+o)).join(" · "))}</span><h4>${esc(l.name)}</h4>
+    ${l.why?`<p style="margin:0 0 8px">${esc(l.why)}</p>`:""}
+    ${total?`<p class="hint" style="margin:0 0 10px">${esc(t("look.total"))}: <b>${esc(priceLine(total))}</b> ${esc(convLine(total))}</p>`:""}
+    <div id="lvList">${piecesHtml(ps,false)}</div>`);
+  hydrateImgs($("sheetRoot"));
+  $("lvSeg").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;$("lvSeg").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===k));$("lvMq").hidden=k!=="mq";$("lvBoard").hidden=k!=="board"};
+  $("lvList").onclick=e=>{const b=e.target.closest("[data-pi]");if(!b)return;const p=ps[+b.dataset.pi];if(p.wid){const w=S.wardrobe.find(x=>x.id===p.wid);if(w)openWardItem(w);return}openItem(catItem(p.type,p.colorKey))};
+}
+async function aiLooksFor(n,extra){
+  const pal=palette(),avoid=S.avoidTags.map(k=>AVOID_TAGS.find(x=>x[0]===k)?.[1]).filter(Boolean).join(", ")||"nothing";
+  const wl=S.wardrobe.map(w=>`w:${w.id}=${typeName(w.type)} ${rate(w.hex).near.name}`).join("; ");
+  const r=await sample.json(`You are a personal stylist. ${extra}
+Client: ${S.gender==="f"?"woman":"man"}, colour type ${S.season}. ${appearance()}. Liked styles: ${likedStyles()}. Avoid: ${avoid}.
+${S.styleSummary?.summary?"Style portrait from Pinterest: "+S.styleSummary.summary:""}
+Allowed colours (keys): ${pal.map(c=>c.key+"="+c.hex).join(", ")}
+Allowed types: ${TYPES.map(x=>x[0]).join(", ")}
+Pieces the client owns (use them when they fit): ${wl||"none"}
+Write texts in ${langName()}. Reply with ONLY JSON {"looks":[{"date":"<YYYY-MM-DD if asked>","name":"","why":"<1 sentence>","occ":["${OCC.join('","')}" — 1-2],"tags":["style keys from: ${STYLE_TAGS.map(x=>x[0]).join(",")}"],"items":[["type","colourKey"] or "w:<id>", ...4]}]} with ${n} looks.`,{cache:false});
+  const okT=new Set(TYPES.map(x=>x[0])),okC=new Set(pal.map(c=>c.key));
+  return(r?.looks||[]).map(l=>({date:l.date,name:String(l.name||""),why:String(l.why||""),occ:(l.occ||[]).filter(o=>OCC.includes(o)),tags:(l.tags||[]).filter(x=>STYLE_TAGS.some(s=>s[0]===x)),
+    items:(l.items||[]).filter(p=>typeof p==="string"?S.wardrobe.some(w=>"w:"+w.id===p):okT.has(p[0])&&okC.has(p[1])).slice(0,5)})).filter(l=>l.name&&l.items.length>=3);
+}
+$("genLooks").onclick=async()=>{
+  const b=$("genLooks");b.disabled=true;$("looksState").innerHTML=`<div class="loader"><i></i></div><p class="hint">${esc(t("style.genWait"))}</p>`;
+  try{const looks=await aiLooksFor(6,S.occ!=="all"?`Create 6 outfits for the occasion "${S.occ}".`:"Create 6 outfits for different occasions.");if(!looks.length)throw{code:"invalid_json"};
+    S.aiLooks=looks.map((l,i)=>({...l,id:"ai"+Date.now().toString(36)+i}));persist();$("looksState").innerHTML="";renderStyle();
+  }catch(err){$("looksState").innerHTML=`<div class="msg">${esc(errText(err))}</div>`}finally{b.disabled=false}
+};
+
+/* week planner */
+const WX_ICON={sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/></svg>',
+ cloud:'<svg viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 18z"/></svg>',
+ rain:'<svg viewBox="0 0 24 24"><path d="M7 15h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></svg>',
+ snow:'<svg viewBox="0 0 24 24"><path d="M7 14h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 14z"/><path d="M8 18h.01M12 20h.01M16 18h.01"/></svg>'};
+function wxKind(day){const c=day.code??3;if(c>=71&&c<=77||c===85||c===86)return"snow";if(day.pp>=50||(c>=51&&c<=67)||(c>=80&&c<=82)||c>=95)return"rain";if(c<=1)return"sun";return"cloud"}
+function tempCat(day){if(day.tcat)return day.tcat;const tm=(day.tmax+day.tmin)/2;return tm<8?"cold":tm<17?"cool":"warm"}
+function weekDays(){const have=Object.fromEntries((S.week.days||[]).map(d=>[d.date,d]));return[0,1,2,3,4,5,6].map(i=>{const date=todayISO(i);return have[date]||{date,manual:true,tcat:S.week.tcat?.[date]||"cool"}})}
+function renderWeek(){
+  $("cityIn").value=S.week.city||"";$("cityIn").placeholder=S.shopCountry==="PL"&&S.currency==="BYN"?"Minsk":"Lisbon";$("wxBtn").hidden=!mcp;
+  const nw=S.week.now;$("wxHint").textContent=mcp?(S.week.city&&S.week.days?.length?t("week.loaded",{c:S.week.city})+(nw?` · ${t("week.now")} ${Math.round(nw.t)}°C`:""):""):t("week.noBrowser");
+  $("geoBtn").hidden=!(mcp?.direct&&navigator.geolocation);
+  $("weekDays").innerHTML=weekDays().map(d=>{const occ=S.week.occ?.[d.date]||(new Date(d.date+"T12:00").getDay()%6===0?"weekend":"office");const plan=S.week.plan?.[d.date];
+    const wx=d.manual?`<div class="chips">${["cold","cool","warm"].map(k=>`<button type="button" class="chip" data-tc="${d.date}|${k}" aria-pressed="${tempCat(d)===k}">${esc(t("temp."+k))}</button>`).join("")}</div>`
+      :`<span class="wx">${WX_ICON[wxKind(d)]}${Math.round(d.tmin)}…${Math.round(d.tmax)}°C${d.pp>=30?` · ${d.pp}%`:""}</span>`;
+    return`<div class="day"><div class="d">${esc(dateStr(d.date,{weekday:"short"}))}<small>${esc(dateStr(d.date,{day:"numeric",month:"short"}))}</small></div><div style="min-width:0">${wx}
+      <div class="chips">${OCC.map(o=>`<button type="button" class="chip" data-oc="${d.date}|${o}" aria-pressed="${occ===o}">${esc(t("occ."+o))}</button>`).join("")}</div>
+      ${plan?`<button class="day-look" type="button" data-pl="${d.date}"><span class="mini">${plan.items.slice(0,4).map(pieceFrom).map(p=>`<span style="background:${tileBg(p.hex)}">${pieceVis(p)}</span>`).join("")}</span><b>${esc(plan.name)}</b></button>`:""}</div></div>`}).join("");
+  $("planAi").hidden=!sample;
+}
+$("weekDays").onclick=e=>{
+  const tc=e.target.closest("[data-tc]");if(tc){const[d,k]=tc.dataset.tc.split("|");S.week.tcat={...(S.week.tcat||{}),[d]:k};persist();renderWeek();return}
+  const oc=e.target.closest("[data-oc]");if(oc){const[d,k]=oc.dataset.oc.split("|");S.week.occ={...(S.week.occ||{}),[d]:k};persist();renderWeek();return}
+  const pl=e.target.closest("[data-pl]");if(pl)openLook(S.week.plan[pl.dataset.pl]);
+};
+$("geoBtn").onclick=()=>geoWeather(false);
+$("cityIn").onchange=e=>{S.week.city=e.target.value.trim();persist()};
+async function forecast(city,start,days,coords){
+  let p=coords;
+  if(!p){const g=await readJsonPage(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en`);p=g.results?.[0];if(!p)throw{message:t("week.noCity")}}
+  let url=`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&current=temperature_2m,weather_code&timezone=auto`;
+  url+=start?`&start_date=${start}&end_date=${days}`:`&forecast_days=${days}`;
+  const f=await readJsonPage(url);const D=f.daily||{};
+  const cur=f.current?{t:f.current.temperature_2m,code:f.current.weather_code,at:Date.now()}:null;
+  return{place:[p.name,p.country].filter(Boolean).join(", "),lat:p.latitude,lon:p.longitude,now:cur,days:(D.time||[]).map((d,i)=>({date:d,tmax:D.temperature_2m_max[i],tmin:D.temperature_2m_min[i],pp:D.precipitation_probability_max?.[i]??0,code:D.weather_code?.[i]??3}))};
+}
+$("wxBtn").onclick=async()=>{
+  const city=$("cityIn").value.trim();if(!city)return;S.week.city=city;const b=$("wxBtn");b.disabled=true;$("wxHint").textContent=t("week.loading");
+  try{const r=await forecast(city,null,7);Object.assign(S.week,{days:r.days,city:r.place,lat:r.lat,lon:r.lon,now:r.now,geo:false});persist();renderWeek()}catch(e){$("wxHint").textContent=brErr(e)}finally{b.disabled=false}
+};
+function geoWeather(silent){
+  if(!navigator.geolocation)return;const b=$("geoBtn");if(b)b.disabled=true;if(!silent)$("wxHint").textContent=t("week.loading");
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{const r=await forecast("",null,7,{latitude:+pos.coords.latitude.toFixed(3),longitude:+pos.coords.longitude.toFixed(3),name:t("week.here")});
+      Object.assign(S.week,{days:r.days,city:t("week.here"),lat:r.lat,lon:r.lon,now:r.now,geo:true});persist();renderWeek()}catch(e){if(!silent)$("wxHint").textContent=brErr(e)}finally{if(b)b.disabled=false}
+  },()=>{if(b)b.disabled=false;if(!silent)$("wxHint").textContent=t("week.geoDenied")},{maximumAge:36e5,timeout:15000});
+}
+async function autoWeather(){
+  if(!mcp?.direct||S.week.lat==null)return;
+  if(S.week.now&&Date.now()-S.week.now.at<30*60e3)return;
+  try{const r=await forecast("",null,7,{latitude:S.week.lat,longitude:S.week.lon});Object.assign(S.week,{days:r.days,now:r.now});persist();renderWeek()}catch(e){}
+}
+function pickLook(occ,tc,rain,used){
+  const all=allLooks();let c=all.filter(l=>(l.occ||[]).includes(occ)&&(!l.temp||l.temp.includes(tc))&&!used.has(l.id));
+  if(rain)c.sort((a,b)=>(b.items.some(i=>i[0]==="trench")?1:0)-(a.items.some(i=>i[0]==="trench")?1:0));
+  if(!c.length)c=all.filter(l=>(!l.temp||l.temp.includes(tc))&&!used.has(l.id));if(!c.length)c=all;
+  const l=c[0];used.add(l.id);
+  let items=l.items.map(x=>x);const own=S.wardrobe.filter(w=>rate(w.hex).score>=55);
+  items=items.map(it=>{if(typeof it==="string")return it;const s=T_BY[it[0]]?.[2];const w=own.find(w=>T_BY[w.type]?.[2]===s&&!used.has("w"+w.id));if(w&&hash(l.id+w.id)>.4){used.add("w"+w.id);return"w:"+w.id}return it});
+  return{...l,items};
+}
+$("planBtn").onclick=()=>{const used=new Set();S.week.plan={};for(const d of weekDays()){const occ=S.week.occ?.[d.date]||(new Date(d.date+"T12:00").getDay()%6===0?"weekend":"office");S.week.plan[d.date]=pickLook(occ,tempCat(d),!d.manual&&wxKind(d)==="rain",used)}persist();renderWeek()};
+$("planAi").onclick=async()=>{
+  const b=$("planAi");b.disabled=true;$("planState").innerHTML=`<div class="loader"><i></i></div><p class="hint">${esc(t("week.aiWait"))}</p>`;
+  const days=weekDays().map(d=>`${d.date}: ${S.week.occ?.[d.date]||"office"}, ${d.manual?tempCat(d):Math.round(d.tmin)+"…"+Math.round(d.tmax)+"°C, rain "+d.pp+"%"}`).join("\n");
+  try{const looks=await aiLooksFor(7,`Plan one outfit per day for these 7 days (date: occasion, weather). Put the date in each look. Do not repeat a whole outfit; re-using pieces is fine.\n${days}`);
+    if(!looks.length)throw{code:"invalid_json"};S.week.plan={};weekDays().forEach((d,i)=>{const l=looks.find(x=>x.date===d.date)||looks[i];if(l)S.week.plan[d.date]={...l,id:"wk"+d.date}});persist();$("planState").innerHTML="";renderWeek();
+  }catch(err){$("planState").innerHTML=`<div class="msg">${esc(errText(err))}</div>`}finally{b.disabled=false}
+};
+
+/* trip */
+const PURPOSES=["city","beach","business","mountains","event"];
+function renderTrip(){
+  const T=S.trip;$("tripCity").value=T.city||"";$("tripStart").value=T.start||todayISO(7);$("tripNights").value=T.nights||4;
+  $("tripPurpose").innerHTML=PURPOSES.map(p=>`<button type="button" class="chip" data-p="${p}" aria-pressed="${T.purpose===p}">${esc(t("purp."+p))}</button>`).join("");
+  const R=T.result;if(!R){$("tripOut").innerHTML="";return}
+  $("tripOut").innerHTML=`<div class="card">${R.place?`<h3>${esc(R.place)}</h3>`:""}${R.weather?`<p style="margin-bottom:8px">${esc(R.weather)}</p>`:""}
+    ${R.days?.length?`<div class="chips">${R.days.map(d=>`<span class="chip" style="display:flex;gap:6px;align-items:center">${esc(dateStr(d.date,{day:"numeric",month:"short"}))} ${WX_ICON[wxKind(d)].replace('<svg','<svg width="16" height="16"')} ${Math.round(d.tmax)}°</span>`).join("")}</div>`:""}</div>
+    <div class="card"><h3>${esc(t("trip.pack"))}</h3><div class="pack">${(R.groups||[]).map((g,gi)=>`<div><h4>${esc(g.title)}</h4>${g.items.map((it,ii)=>`<label><input type="checkbox" data-ck="${gi}-${ii}" ${R.done?.[gi+"-"+ii]?"checked":""}>${esc(it)}</label>`).join("")}</div>`).join("")}</div></div>
+    ${R.looks?.length?`<h3 style="margin:14px 0 8px">${esc(t("trip.looks"))}</h3><div class="looks" id="tripLooks">${R.looks.map((l,i)=>lookCard(l,"t",i)).join("")}</div>`:""}`;
+  const tl=$("tripLooks");if(tl)tl.onclick=e=>{const c=e.target.closest(".look");if(c&&!e.target.closest(".heart"))openLook(R.looks[+c.dataset.i])};
+}
+$("tripPurpose").onclick=e=>{const p=e.target.closest("[data-p]")?.dataset.p;if(!p)return;S.trip.purpose=p;persist();renderTrip()};
+$("tripOut").onchange=e=>{const k=e.target.dataset.ck;if(!k)return;S.trip.result.done={...(S.trip.result.done||{}),[k]:e.target.checked};persist()};
+function localPack(days,nights,purpose,tc){
+  const n=Math.min(nights,7),f=S.gender==="f";const L=k=>t("pk."+k);
+  const g=[{title:L("clothes"),items:[`${L("tops")} × ${Math.ceil(n*0.8)}`,`${L("bottoms")} × ${Math.max(2,Math.ceil(n/3))}`,tc==="warm"?L("dress"):L("knit"),tc==="cold"?L("coat"):tc==="cool"?L("trench"):L("light")]},
+    {title:L("shoes"),items:[purpose==="beach"?L("sandals"):L("comfy"),purpose==="business"||purpose==="event"?L("smart"):L("second")]},
+    {title:L("acc"),items:[L("bag"),tc!=="warm"?L("scarf"):L("sun"),days?.some(d=>wxKind(d)==="rain")?L("umbrella"):L("sunglasses")]},
+    {title:L("care"),items:[L("toiletries"),f?L("makeup"):L("razor"),L("charger")]}];
+  return g;
+}
+$("tripBtn").onclick=async()=>{
+  const T=S.trip;T.city=$("tripCity").value.trim();T.start=$("tripStart").value||todayISO(7);T.nights=Math.max(1,Math.min(30,+$("tripNights").value||4));persist();
+  if(!T.city)return;const b=$("tripBtn");b.disabled=true;$("tripOut").innerHTML=`<div class="loader"><i></i></div><p class="hint">${esc(t("trip.wait"))}</p>`;
+  let days=[],place=T.city;const end=new Date(T.start+"T12:00");end.setDate(end.getDate()+T.nights);const endISO=end.toISOString().slice(0,10);
+  const within=(new Date(endISO)-new Date())/864e5<15;
+  if(mcp&&within){try{const r=await forecast(T.city,T.start,endISO);days=r.days;place=r.place}catch(e){}}
+  const tm=days.length?days.reduce((s,d)=>s+(d.tmax+d.tmin)/2,0)/days.length:null;const tc=tm==null?"cool":tm<8?"cold":tm<17?"cool":"warm";
+  if(sample){
+    try{const wx=days.length?days.map(d=>`${d.date} ${Math.round(d.tmin)}…${Math.round(d.tmax)}°C rain ${d.pp}%`).join("; "):"no forecast yet — use typical climate for the dates";
+      const r=await sample.json(`Plan a capsule wardrobe and packing list. Destination: ${T.city}. Dates: ${T.start} to ${endISO} (${T.nights} nights). Purpose: ${T.purpose}. Weather: ${wx}.
+Client: ${S.gender==="f"?"woman":"man"}, colour type ${S.season}. ${appearance()}. Liked styles: ${likedStyles()}.
+Allowed colours (keys): ${palette().map(c=>c.key).join(", ")}. Allowed types: ${TYPES.map(x=>x[0]).join(", ")}.
+Pieces the client owns: ${S.wardrobe.map(w=>`w:${w.id}=${typeName(w.type)} ${rate(w.hex).near.name}`).join("; ")||"none"}
+Write texts in ${langName()}. Reply with ONLY JSON {"weather":"<1 sentence summary>","groups":[{"title":"","items":["<item with quantity>"]}],"looks":[{"name":"","occ":["trip"],"items":[["type","colourKey"] or "w:<id>"]}] (3 looks)}`,{cache:false});
+      const okT=new Set(TYPES.map(x=>x[0])),okC=new Set(palette().map(c=>c.key));
+      T.result={place,days,weather:String(r.weather||""),groups:(r.groups||[]).map(g=>({title:String(g.title||""),items:(g.items||[]).map(String)})).filter(g=>g.items.length),
+        looks:(r.looks||[]).map((l,i)=>({id:"trip"+i,name:String(l.name||""),occ:["trip"],items:(l.items||[]).filter(p=>typeof p==="string"?S.wardrobe.some(w=>"w:"+w.id===p):okT.has(p[0])&&okC.has(p[1]))})).filter(l=>l.items.length>=3)};
+    }catch(err){T.result=null}
+  }
+  if(!T.result||!T.result.groups?.length){const used=new Set();T.result={place,days,weather:tm==null?t("trip.noWx"):"",groups:localPack(days,T.nights,T.purpose,tc),looks:[0,1,2].map(()=>pickLook(T.purpose==="business"?"office":"trip",tc,false,used))}}
+  persist();b.disabled=false;renderTrip();
+};
+
+/* inspiration */
+function renderInsp(){
+  $("styleTags").innerHTML=STYLE_TAGS.map(([k,en,ru])=>`<button type="button" class="chip soft" aria-pressed="${S.styleTags.includes(k)}" data-st="${k}">${esc(dl(en,ru,"s."+k))}</button>`).join("");
+  $("avoidTags").innerHTML=AVOID_TAGS.map(([k,en,ru])=>`<button type="button" class="chip soft" aria-pressed="${S.avoidTags.includes(k)}" data-av="${k}">${esc(dl(en,ru,"a."+k))}</button>`).join("");
+  $("pin").value=S.pinterest||"";$("pinOpen").hidden=!S.pinterest;$("pinOpen").href=S.pinterest||"#";$("pinOpen").textContent=t("style.open");
+  const st=S.styleSummary;$("styleOut").innerHTML=st?`<div class="msg"><b>${esc(t("style.portrait"))}</b><br>${esc(st.summary)}${st.keywords?.length?`<br><span class="hint">${st.keywords.map(esc).join(" · ")}</span>`:""}</div>`:"";
+  $("pinsLabel").hidden=!(sample&&imgLimits);
+}
+$("styleTags").onclick=e=>{const k=e.target.closest("[data-st]")?.dataset.st;if(!k)return;S.styleTags=S.styleTags.includes(k)?S.styleTags.filter(x=>x!==k):[...S.styleTags,k];persist();renderStyle()};
+$("avoidTags").onclick=e=>{const k=e.target.closest("[data-av]")?.dataset.av;if(!k)return;S.avoidTags=S.avoidTags.includes(k)?S.avoidTags.filter(x=>x!==k):[...S.avoidTags,k];persist();renderStyle()};
+$("pinSave").onclick=()=>{S.pinterest=$("pin").value.trim();persist();renderInsp()};
+$("pinsFile").onchange=async e=>{
+  const files=[...e.target.files].slice(0,imgLimits?.maxCount||6);if(!files.length)return;
+  $("pinsPrev").innerHTML=files.map(f=>`<img alt="" src="${URL.createObjectURL(f)}">`).join("");
+  $("styleOut").innerHTML=`<div class="loader"><i></i></div><p class="hint">${esc(t("style.analyzing"))}</p>`;
+  try{const r=await sample.json(`These are screenshots of Pinterest pins: outfits the user likes. Describe their style for an AI stylist, in ${langName()}. Also pick matching style keys from: ${STYLE_TAGS.map(x=>x[0]+"="+x[1]).join(", ")}. Reply with ONLY JSON {"summary":"<2-3 sentences>","keywords":["<5-8 short tags>"],"styleKeys":["..."]}`,{images:files,cache:false});
+    S.styleSummary=r;if(Array.isArray(r.styleKeys)){const k=r.styleKeys.filter(x=>STYLE_TAGS.some(s=>s[0]===x));if(k.length)S.styleTags=k}persist();renderStyle();
+  }catch(err){$("styleOut").innerHTML=`<div class="msg">${esc(errText(err))}</div>`}
+  e.target.value="";
+};
+
+/* ================= SHOP ================= */
+function buildCatalog(){
+  const isCS=S.season==="Cool Summer"||!S.seasonAI,pal=palette(),out=[];
+  TYPES.forEach(([key,cat,,,,,pref],ti)=>{
+    const cols=isCS?pref.map(k=>pal.find(c=>c.key===k)).filter(Boolean):[0,1,2,3].map(i=>pal[(ti*3+i)%pal.length]).filter(Boolean);
+    cols.forEach((c,ci)=>{const seg=S.segs[(ti+ci)%S.segs.length];const it=catItem(key,c.key,seg);if(it.stores.length)out.push(it)});
+  });
+  return out;
+}
+let CUR_ITEMS=[];
+function renderShop(){
+  segHtml("shSeg",[["cat",t("shop.catalog")],["check",t("shop.check")]],S.shSeg);
+  $("shCat").hidden=S.shSeg!=="cat";$("shCheck").hidden=S.shSeg!=="check";
+  const pal=palette(),C=C_BY[S.shopCountry]||C_BY.PL,sc=shopCur();
+  $("cats").innerHTML=CATS.map(k=>`<button type="button" class="chip" aria-pressed="${S.cat===k}" data-c="${k}">${esc(t("cat."+k))}</button>`).join("");
+  $("colorChips").innerHTML=`<button type="button" class="chip" aria-pressed="${!S.color}" data-col="">${esc(t("shop.allColors"))}</button>`+pal.map(c=>`<button type="button" class="dotchip" style="background:${c.hex}" title="${esc(c.name)}" aria-label="${esc(c.name)}" aria-pressed="${S.color===c.key}" data-col="${c.key}"></button>`).join("");
+  segHtml("segs",SEGS.map(k=>[k,t("seg."+k)]),"");$("segs").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",S.segs.includes(b.dataset.k)));
+  $("stores").innerHTML=STORES.filter(s=>S.segs.includes(s.seg)&&storeOk(s)).map(s=>`<button type="button" class="chip" aria-pressed="${S.stores.includes(s.id)}" data-st="${s.id}">${esc(s.n)}</button>`).join("");
+  $("budgetLabel").textContent=t("shop.budget",{c:sc});$("pmin").value=S.pmin;$("pmax").value=S.pmax;
+  $("budgetConv").textContent=sc!==S.currency?`≈ ${money(convert(S.pmin,sc,S.currency)||0,S.currency)} – ${money(convert(S.pmax,sc,S.currency)||0,S.currency)}`:"";
+  const act=STORES.filter(s=>S.segs.includes(s.seg)&&S.stores.includes(s.id)&&storeOk(s)).length;
+  $("fSummary").textContent=`${act} · ${money(S.pmin,sc)}–${money(S.pmax,sc)}`;
+  const all=buildCatalog(),q=$("q").value.trim().toLowerCase();
+  CUR_ITEMS=all.filter(it=>{const p=shopPrice(it.price).v;return(S.cat==="all"||it.cat===S.cat)&&(!S.color||it.colorKey===S.color)&&p>=S.pmin&&p<=S.pmax&&(!q||(typeName(it.type)+" "+it.colorName).toLowerCase().includes(q))});
+  $("shopLead").textContent=t("shop.lead",{season:S.season,c:S.lang==="ru"?C[2]:C[1]});
+  $("resTitle").textContent=t("shop.found",{n:CUR_ITEMS.length});
+  if(!STORES.some(s=>S.segs.includes(s.seg)&&storeOk(s)&&S.stores.includes(s.id))){$("results").innerHTML=`<div class="empty">${esc(t("shop.noStores"))}</div>`;return}
+  $("results").innerHTML=CUR_ITEMS.length?CUR_ITEMS.map((it,i)=>cardHtml(it,"r",i)).join(""):`<div class="empty">${esc(t("shop.empty"))}</div>`;
+}
+function cardHtml(it,src,i){
+  const fav=S.favs.some(f=>f.id===it.id);
+  return`<button class="item" type="button" data-src="${src}" data-i="${i}"><div style="position:relative">${tile({type:it.type,hex:it.hex})}</div>
+    <span class="heart" role="button" tabindex="0" aria-label="${esc(t("item.save"))}" aria-pressed="${fav}">${heartSvg}</span>
+    <div class="meta"><span class="brand">${esc(it.stores.map(id=>STORES.find(s=>s.id===id)?.n).filter(Boolean).join(" · "))}</span>
+    <span class="name">${esc(typeName(it.type))}</span><span class="col"><b style="background:${it.hex}"></b>${esc(it.colorName)}</span>
+    <span class="pr">${esc(priceLine(it.price))}</span><span class="conv">${esc(convLine(it.price))}</span></div></button>`;
+}
+$("shSeg").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;S.shSeg=k;persist();renderShop()};
+$("cats").onclick=e=>{const c=e.target.closest("[data-c]")?.dataset.c;if(!c)return;S.cat=c;persist();renderShop()};
+$("colorChips").onclick=e=>{const b=e.target.closest("[data-col]");if(!b)return;S.color=b.dataset.col;persist();renderShop()};
+$("segs").onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(!k)return;if(S.segs.includes(k)){if(S.segs.length===1)return;S.segs=S.segs.filter(x=>x!==k)}else{S.segs=[...S.segs,k];S.stores=[...new Set([...S.stores,...STORES.filter(s=>s.seg===k).map(s=>s.id)])];if(k==="lux")S.pmax=Math.max(S.pmax,niceRound(convert(30000,"PLN",shopCur())))}persist();renderShop()};
+$("stores").onclick=e=>{const id=e.target.closest("[data-st]")?.dataset.st;if(!id)return;S.stores=S.stores.includes(id)?S.stores.filter(x=>x!==id):[...S.stores,id];persist();renderShop()};
+["pmin","pmax"].forEach(k=>$(k).onchange=()=>{S[k]=Math.max(0,Number($(k).value)||0);if(S.pmin>S.pmax)[S.pmin,S.pmax]=[S.pmax,S.pmin];persist();renderShop()});
+$("q").oninput=()=>renderShop();
+function toggleFav(it){S.favs=S.favs.some(f=>f.id===it.id)?S.favs.filter(f=>f.id!==it.id):[...S.favs,it];persist();renderShop();renderSaved();renderHeader()}
+function gridClick(e){const card=e.target.closest(".item[data-src]");if(!card)return;const list=card.dataset.src==="f"?S.favs:CUR_ITEMS;const it=list[+card.dataset.i];if(!it)return;
+  if(e.target.closest(".heart")){e.preventDefault();toggleFav(it);return}openItem(it)}
+$("results").onclick=gridClick;$("saved").onclick=gridClick;
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList?.contains("heart")){e.preventDefault();e.stopPropagation();e.target.click()}},true);
+function openItem(it){
+  const fav=S.favs.some(f=>f.id===it.id);
+  const sts=[...new Set([...it.stores,...STORES.filter(s=>s.seg===it.seg&&S.stores.includes(s.id)&&storeOk(s)).map(s=>s.id)])].slice(0,5).map(id=>STORES.find(s=>s.id===id)).filter(Boolean);
+  openSheet(`<button class="closex" type="button">${esc(t("close"))}</button><div style="clear:both"></div>
+    ${tile({type:it.type,hex:it.hex})}
+    <span class="eyebrow" style="display:block;margin-top:12px">${esc(t("seg."+it.seg))}</span><h4>${esc(typeName(it.type))}</h4>
+    <div class="meta" style="padding:0"><span class="col"><b style="background:${it.hex}"></b>${esc(it.colorName)} · ${it.hex}</span>
+      <span class="pr" style="font-size:18px">${esc(priceLine(it.price))}</span><span class="conv">${esc(convLine(it.price))}</span></div>
+    <div class="why"><div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg><span>${esc(t("item.whyColor",{color:it.colorName,season:S.season}))}</span></div></div>
+    <p class="hint" style="margin:0 0 12px">${esc(t("item.approx"))}</p>
+    <b style="display:block;margin-bottom:8px">${esc(t("item.where",{c:S.lang==="ru"?(C_BY[S.shopCountry]||C_BY.PL)[2]:(C_BY[S.shopCountry]||C_BY.PL)[1]}))}</b>
+    <div class="links">${sts.map(s=>`<a href="${esc(storeLink(s,it.type,it.colorKey))}" target="_blank" rel="noopener"><span>${esc(s.n)}</span><span>${esc(t("item.search"))} ↗</span></a>`).join("")}</div>
+    <div class="row" style="margin-top:14px"><button class="btn soft" type="button" id="favBtn">${esc(fav?t("item.unsave"):t("item.save"))}</button></div>
+    <h3 style="margin:18px 0 8px;font-size:16px">${esc(t("build.title"))}</h3>${buildControls()}<div id="buildOut"></div>`);
+  $("favBtn").onclick=()=>{toggleFav(it);closeSheet()};
+  wireBuild(pieceFrom([it.type,it.colorKey]));
+}
+/* check an item against the palette */
+$("checkFile").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;e.target.value="";
+  const img=await loadImage(f),c=toCanvas(img,640),hex=dominant(c,{crop:.2,skipBorder:true}),r=rate(hex);
+  const url=URL.createObjectURL(f);
+  const similar=palette().slice().sort((a,b)=>dE(a.hex,hex)-dE(b.hex,hex)).slice(0,1)[0];
+  const sims=buildCatalog().filter(it=>it.colorKey===similar.key).slice(0,4);
+  $("checkOut").innerHTML=`<div class="card"><div class="verdict"><img alt="" src="${url}"><div>${verdictHtml(r,hex)}</div></div>
+    <div id="checkAi" style="margin-top:10px">${sample&&imgLimits?`<button class="btn soft sm" type="button" id="checkAiBtn">${esc(t("check.ai"))}</button>`:""}</div></div>
+    ${sims.length?`<h3 style="margin:14px 0 8px;font-size:16px">${esc(t("check.similar"))}</h3><div class="grid" id="checkSims">${sims.map((it,i)=>cardHtml(it,"c",i)).join("")}</div>`:""}`;
+  const cs=$("checkSims");if(cs)cs.onclick=ev=>{const card=ev.target.closest(".item");if(!card)return;const it=sims[+card.dataset.i];if(ev.target.closest(".heart")){toggleFav(it);return}openItem(it)};
+  const ab=$("checkAiBtn");if(ab)ab.onclick=async()=>{ab.disabled=true;ab.textContent=t("wait");
+    try{const res=await sample.json(`The image is a screenshot or photo of a clothing item the user is thinking of buying. The user has the ${S.season} colour type (palette: ${palette().map(c=>c.name+" "+c.hex).join(", ")}). ${appearance()}. In ${langName()}: name the item, its colour, say if it suits her (yes / borderline / no) and why in 1-2 sentences, and suggest the closest better colour from the palette. Reply with ONLY JSON {"item":"","colour":"","verdict":"yes|borderline|no","why":"","better":"<palette colour name>"}`,{images:f,cache:false});
+      const v={yes:"ok",borderline:"mid",no:"bad"}[res.verdict]||"mid";
+      $("checkAi").innerHTML=`<div class="msg"><b class="v-${v}">${esc(res.item||"")} · ${esc(res.colour||"")}</b><br>${esc(res.why||"")}${res.better?`<br><span class="hint">${esc(t("check.better",{c:res.better}))}</span>`:""}</div>`;
+    }catch(err){ab.textContent=errText(err)}};
+};
+
+/* ================= STYLIST CHAT ================= */
+function chatContext(){
+  const C=C_BY[S.shopCountry]||C_BY.PL;
+  return`You are Undertone, a warm, concise personal stylist inside a fashion app. Answer in ${langName()}, in short paragraphs, practical and specific. Recommend only colours from the client's palette unless asked.
+Client: ${S.name||"the user"}, ${S.gender==="f"?"woman":"man"}, colour type ${S.season}. ${appearance()}.
+Palette: ${palette().map(c=>c.name).join(", ")}. Avoid: ${avoidList().map(a=>a.name).join(", ")}.
+Liked styles: ${likedStyles()}. ${S.styleSummary?.summary?"Style portrait: "+S.styleSummary.summary:""}
+Wardrobe: ${S.wardrobe.map(w=>`${w.name||typeName(w.type)} (${rate(w.hex).near.name}, fit ${rate(w.hex).score}%)`).join("; ")||"not added yet"}.
+Shops in ${C[1]}: ${STORES.filter(s=>storeOk(s)&&S.stores.includes(s.id)).map(s=>s.n).join(", ")}. Currency: ${C[3]}.
+Today: ${todayISO()}.`;
+}
+function renderChat(){
+  const msgs=S.chat.length?S.chat:[{role:"assistant",content:t("chat.hello",{n:S.name?(S.lang==="ru"?", ":" ")+S.name:""})}];
+  $("chat").innerHTML=msgs.map(m=>`<div class="bubble ${m.role==="user"?"me":"ai"}">${esc(m.content)}</div>`).join("")+(sample?"":`<div class="msg">${esc(t("chat.na"))}</div>`);
+  $("chatChips").innerHTML=[1,2,3,4].map(i=>`<button type="button" class="chip" data-q="${i}">${esc(t("chat.q"+i))}</button>`).join("");
+  $("chatSend").disabled=!sample;
+}
+$("chatChips").onclick=e=>{const i=e.target.closest("[data-q]")?.dataset.q;if(!i)return;$("chatIn").value=t("chat.q"+i);$("chatForm").requestSubmit()};
+let chatCtl=null;
+$("chatForm").onsubmit=async e=>{
+  e.preventDefault();const text=$("chatIn").value.trim();if(!text||!sample)return;$("chatIn").value="";
+  S.chat.push({role:"user",content:text});S.chat=S.chat.slice(-30);renderChat();
+  const bub=document.createElement("div");bub.className="bubble ai";bub.textContent=t("wait");$("chat").appendChild(bub);bub.scrollIntoView({block:"end"});
+  chatCtl=new AbortController();$("chatSend").disabled=true;
+  try{const turns=[{role:"user",content:chatContext()},...S.chat.slice(-16)];
+    const r=await sample(turns,{cache:false,signal:chatCtl.signal,onText:({text})=>{bub.textContent=text;bub.scrollIntoView({block:"end"})}});
+    S.chat.push({role:"assistant",content:r.text});persist();
+  }catch(err){bub.textContent=err.text||errText(err)}finally{$("chatSend").disabled=false}
+};
+
+/* ================= converter ================= */
+let CV={from:"PLN",to:"BYN",amt:100};
+function openConverter(){
+  if(S.currency!=="BYN"&&CV.to==="BYN"&&CV.from==="PLN"){CV.from=shopCur()===S.currency?"EUR":shopCur();CV.to=S.currency}
+  openSheet(`<button class="closex" type="button">${esc(t("close"))}</button>
+    <span class="eyebrow">${esc(t("cv.eyebrow"))}</span><h4>${esc(t("cv.title"))}</h4>
+    <div class="card" style="display:grid;gap:12px">
+      <div class="grid2" style="grid-template-columns:1fr 110px"><input class="inp" id="cvAmt" type="number" inputmode="decimal" min="0" step="any" style="font-size:22px;font-weight:800"><select class="inp" id="cvFrom"></select></div>
+      <button class="btn soft sm" type="button" id="cvSwap" style="justify-self:start">${esc(t("cv.swap"))}</button>
+      <div class="grid2" style="grid-template-columns:1fr 110px"><output id="cvOut" class="inp" style="font-size:22px;font-weight:800;background:var(--sunk)" aria-live="polite"></output><select class="inp" id="cvTo"></select></div>
+      <div class="wrapchips" id="cvQuick"></div>
+      <p class="hint" id="cvRate" style="margin:0"></p>
+    </div>
+    <div class="row"><button class="btn soft sm" type="button" id="cvRefresh">${esc(t("cv.refresh"))}</button></div>
+    <p class="hint" id="cvHint"></p>`);
+  $("cvAmt").value=CV.amt;$("cvFrom").innerHTML=curOptions(CV.from);$("cvTo").innerHTML=curOptions(CV.to);
+  const upd=()=>{CV.amt=Number($("cvAmt").value)||0;CV.from=$("cvFrom").value;CV.to=$("cvTo").value;const v=convert(CV.amt,CV.from,CV.to);
+    $("cvOut").textContent=v==null?"—":v.toLocaleString(loc(),{maximumFractionDigits:2});const b=S.rates.byn;
+    $("cvRate").textContent=t("cv.rate",{a:CV.from,b:CV.to,r:(b[CV.from]/b[CV.to]).toLocaleString(loc(),{maximumFractionDigits:4}),d:dateStr(S.rates.date)});
+    $("cvQuick").innerHTML=[50,100,200,500,1000].map(v=>`<button type="button" class="chip" data-v="${v}">${v} ${CV.from}</button>`).join("")};
+  ["cvAmt","cvFrom","cvTo"].forEach(k=>$(k).oninput=upd);
+  $("cvSwap").onclick=()=>{[CV.from,CV.to]=[CV.to,CV.from];$("cvFrom").value=CV.from;$("cvTo").value=CV.to;upd()};
+  $("cvQuick").onclick=e=>{const v=e.target.dataset.v;if(v){$("cvAmt").value=v;upd()}};
+  $("cvRefresh").onclick=async()=>{const h=$("cvHint"),btn=$("cvRefresh");
+    if(!mcp){h.textContent=t("cv.noBrowser",{d:dateStr(S.rates.date)});return}btn.disabled=true;h.textContent=t("cv.opening");
+    try{const list=await readJsonPage("https://api.nbrb.by/exrates/rates?periodicity=0");const byn={BYN:1};let date=S.rates.date;
+      for(const x of list){if(x.Cur_Abbreviation&&x.Cur_OfficialRate){byn[x.Cur_Abbreviation]=x.Cur_OfficialRate/(x.Cur_Scale||1);date=(x.Date||date).slice(0,10)}}
+      if(!byn.PLN)throw{message:"PLN?"};S.rates={date,byn};persist();renderAll();$("cvFrom").innerHTML=curOptions(CV.from);$("cvTo").innerHTML=curOptions(CV.to);h.textContent=t("cv.updated",{d:dateStr(date)});upd();
+    }catch(e){h.textContent=t("cv.fail")+brErr(e)}finally{btn.disabled=false}};
+  upd();
+}
+
+/* ================= sheets / saved / routing ================= */
+function openSheet(html){const r=$("sheetRoot");r.innerHTML=`<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`;$("scrim").onclick=e=>{if(e.target.id==="scrim")closeSheet()};r.querySelector(".closex")?.addEventListener("click",closeSheet)}
+function closeSheet(){$("sheetRoot").innerHTML=""}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+function renderSaved(){
+  $("savedLooks").innerHTML=S.favLooks.map((l,i)=>lookCard(l,"f",i)).join("");$("savedLooks").hidden=!S.favLooks.length;
+  $("saved").innerHTML=S.favs.length?S.favs.map((it,i)=>cardHtml(it,"f",i)).join(""):(S.favLooks.length?"":`<div class="empty">${esc(t("saved.empty"))}</div>`);
+}
+const VIEWS=["profile","wardrobe","style","shop","stylist","saved"];
+function route(){
+  const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"profile";
+  VIEWS.forEach(k=>$("v-"+k).hidden=k!==v);$("composer").hidden=v!=="stylist";
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.dataset.v===v?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+function renderAll(){applyI18n();renderHeader();renderProfile();renderWardrobe();renderStyle();renderShop();renderChat();renderSaved();hydrateImgs()}
+renderAll();route();
+
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
